@@ -1,0 +1,263 @@
+package com.example.balneapp.ui.theme.pantallas
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.balneapp.R
+
+@Composable
+fun PantallaRegistro(navController: NavController) {
+    var fullName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    val azulOscuro = Color(0xFF0D075E)
+    val celesteAgua = Color(0xFF00A3C4)
+
+    //contenedor de pantalla
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    )
+    //imagen decoracion arriba izquierda
+     {
+        Image(
+            painter = painterResource(id = R.drawable.decoracion2),
+            contentDescription = "Decoración de fondo",
+            modifier = Modifier
+                .height(170.dp)
+                .align(Alignment.TopStart)
+                .padding(top = 100.dp),
+            contentScale = ContentScale.FillHeight
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(30.dp))
+
+            //imagen logo balneapp
+            Image(
+                painter = painterResource(id = R.drawable.logobalneapp),
+                contentDescription = "Logo BalneApp",
+                modifier = Modifier.size(150.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            //"boton" volver hacia atras
+            {
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(color = Color(0xFFF3EFE6), shape = CircleShape)
+                        .clickable { navController.popBackStack() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "‹",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = celesteAgua
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                //texto crea tu cuenta
+                Text(
+                    text = "Creá tu cuenta",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulOscuro
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            //campos input:
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Nombre completo",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = fullName,
+                    onValueChange = { fullName = it },
+                    label = { Text("Nombre completo") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Correo electrónico",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Ejemplo@correo.com") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Contraseña",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Mínimo 6 caracteres") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "Confirmá tu contraseña",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                TextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text("Reescribe la contraseña") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+            //boton registro que lleva al logueo
+            Button(
+                onClick = {
+                    navController.navigate("logueo") {
+                        popUpTo("registro") { inclusive = true }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = celesteAgua)
+            ) {
+                Text(
+                    text = "Registrarse",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            //texto acompaña al logo de google
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "— registrate con —",
+                    fontSize = 12.sp,
+                    color = Color.Blue
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+                //logo de google para registrarse
+            Image(
+                painter = painterResource(id = R.drawable.google),
+                contentDescription = "Registrarse con Google",
+                modifier = Modifier.size(50.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "¿Ya tenés cuenta?",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulOscuro
+                )
+                Text(
+                    text = "Iniciá sesión",
+                    fontSize = 14.sp,
+                    color = celesteAgua,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PantallaRegistroPreview() {
+    PantallaRegistro(navController = rememberNavController())
+}

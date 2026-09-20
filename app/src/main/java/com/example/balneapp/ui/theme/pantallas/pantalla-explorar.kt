@@ -58,7 +58,7 @@ fun PantallaExplorar(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Inicio
+
                     Box(
                         modifier = Modifier
                             .background(
@@ -86,7 +86,7 @@ fun PantallaExplorar(navController: NavController) {
                         }
                     }
 
-                    // Favoritos
+
                     Box(
                         modifier = Modifier
                             .background(
@@ -111,7 +111,6 @@ fun PantallaExplorar(navController: NavController) {
                         }
                     }
 
-                    // Explorar
                     Box(
                         modifier = Modifier
                             .background(
@@ -135,7 +134,6 @@ fun PantallaExplorar(navController: NavController) {
                         }
                     }
 
-                    // Reservas
                     Box(
                         modifier = Modifier
                             .background(
@@ -160,7 +158,6 @@ fun PantallaExplorar(navController: NavController) {
                         }
                     }
 
-                    // Perfil
                     Box(
                         modifier = Modifier
                             .background(

@@ -44,7 +44,6 @@ fun PantallaResenas(navController: NavController) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0), // Evita que Scaffold meta margen blanco arriba
 
-        // barra inferior de atajos
         bottomBar = {
             Surface(
                 color = Color.White,
@@ -58,7 +57,6 @@ fun PantallaResenas(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    // Inicio
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
@@ -69,7 +67,6 @@ fun PantallaResenas(navController: NavController) {
                         Text("Inicio", fontSize = 11.sp, color = textoGris)
                     }
 
-                    // Favoritos
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { /* Sin navegación por ahora */ }
@@ -78,7 +75,6 @@ fun PantallaResenas(navController: NavController) {
                         Text("Favoritos", fontSize = 11.sp, color = textoGris)
                     }
 
-                    // Explorar
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { navController.navigate("explorar") }
@@ -91,7 +87,6 @@ fun PantallaResenas(navController: NavController) {
                         Text("Explorar", fontSize = 11.sp, color = textoGris)
                     }
 
-                    // Reservas
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { /* Sin navegación por ahora */ }
@@ -100,7 +95,6 @@ fun PantallaResenas(navController: NavController) {
                         Text("Reservas", fontSize = 11.sp, color = textoGris)
                     }
 
-                    // Perfil
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { navController.navigate("perfil") }
@@ -120,7 +114,6 @@ fun PantallaResenas(navController: NavController) {
                 .padding(bottom = paddingValues.calculateBottomPadding())
                 .verticalScroll(rememberScrollState())
         ) {
-            // Borde celeste superior con botón para volver atrás
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -170,7 +163,6 @@ fun PantallaResenas(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // BARRA de opciones para filtrar comentarios
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -183,7 +175,6 @@ fun PantallaResenas(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Reseña 1
                 TarjetaResenaItem(
                     fotoRes = R.drawable.imagenpaco,
                     nombre = "María Blanco",
@@ -196,7 +187,6 @@ fun PantallaResenas(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // Reseña 2
                 TarjetaResenaItem(
                     fotoRes = R.drawable.imagenpaco,
                     nombre = "Franco Colapinto",
@@ -248,7 +238,6 @@ private fun TarjetaResenaItem(
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            // Usuario y Fecha
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -279,8 +268,7 @@ private fun TarjetaResenaItem(
             }
 
             Spacer(modifier = Modifier.height(6.dp))
-
-            // Estrellas de calificación
+            
             Row {
                 repeat(estrellas) {
                     Icon(
@@ -294,7 +282,6 @@ private fun TarjetaResenaItem(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Texto de reseña
             Text(
                 text = comentario,
                 fontSize = 13.sp,
@@ -303,8 +290,7 @@ private fun TarjetaResenaItem(
             )
 
             Spacer(modifier = Modifier.height(14.dp))
-
-            // Botones de interacción
+            
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,

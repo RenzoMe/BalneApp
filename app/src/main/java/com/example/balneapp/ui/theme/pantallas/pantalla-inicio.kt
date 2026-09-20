@@ -17,7 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
 import kotlinx.coroutines.delay
-// funcion de navegacion con espera de 2 segundos, ir a pantalla logueo
+
 @Composable
 fun PantallaInicio(navController: NavController) {
     LaunchedEffect(Unit) {
@@ -35,14 +35,13 @@ fun PantallaInicio(navController: NavController) {
                 }
             }
     ) {
-        //imagen de fondo
         Image(
             painter = painterResource(id = R.drawable.fondo),
             contentDescription = "Fondo",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
-            //imagen de logo balneapp
+
         Image(
             painter = painterResource(id = R.drawable.logocarga),
             contentDescription = "Logo",

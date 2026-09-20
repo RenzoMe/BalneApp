@@ -56,15 +56,12 @@ fun PantallaGolondrinas(navController: NavController) {
                     .fillMaxWidth()
                     .height(320.dp)
             ) {
-                // Imagen principal
                 Image(
                     painter = painterResource(id = R.drawable.imagengolondrina),
                     contentDescription = "Balneario Golondrinas",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-
-                // Boton volver hacia atras
                 Surface(
                     modifier = Modifier
                         .statusBarsPadding()
@@ -83,7 +80,6 @@ fun PantallaGolondrinas(navController: NavController) {
                     }
                 }
 
-                //Boton favorito
                 Surface(
                     modifier = Modifier
                         .statusBarsPadding()
@@ -102,14 +98,12 @@ fun PantallaGolondrinas(navController: NavController) {
                     }
                 }
 
-                // Mini imagenes del balneario
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
                         .padding(start = 16.dp, bottom = 28.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Miniimagen1
                     Image(
                         painter = painterResource(id = R.drawable.imagengolondrina),
                         contentDescription = "Miniatura 1",
@@ -119,8 +113,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             .clip(RoundedCornerShape(8.dp)),
                         contentScale = ContentScale.Crop
                     )
-
-                    // Miniimagen2
                     Image(
                         painter = painterResource(id = R.drawable.imagenpaco),
                         contentDescription = "Miniatura 2",
@@ -130,8 +122,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             .clip(RoundedCornerShape(8.dp)),
                         contentScale = ContentScale.Crop
                     )
-
-                    // Miniimagen3
                     Image(
                         painter = painterResource(id = R.drawable.img_oasis),
                         contentDescription = "Miniatura 3",
@@ -156,7 +146,6 @@ fun PantallaGolondrinas(navController: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 24.dp)
                 ) {
-                    // Título Balneario Golondrinas
                     Text(
                         text = "Balneario Golondrinas",
                         fontSize = 26.sp,
@@ -166,7 +155,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Ubicacipn
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -214,8 +202,7 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
 
                             Spacer(modifier = Modifier.width(4.dp))
-
-                            //boton de reseñas
+                            
                             Row(
                                 modifier = Modifier.clickable {
                                     navController.navigate("resenas")
@@ -241,7 +228,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Subtítulo de los servicios
                     Text(
                         text = "Servicios",
                         fontSize = 15.sp,
@@ -251,7 +237,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    //Fila y sus logos/img
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -272,7 +257,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
                         }
 
-                        // WiFi
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_wifi),
@@ -288,7 +272,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
                         }
 
-                        // Duchas
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_duchas),
@@ -304,7 +287,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
                         }
 
-                        // Quincho
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_quincho),
@@ -320,7 +302,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
                         }
 
-                        // Accesibilidad
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_accesibilidad),
@@ -336,7 +317,6 @@ fun PantallaGolondrinas(navController: NavController) {
                             )
                         }
 
-                        // Pet Friendly
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_mascotas),
@@ -355,7 +335,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    //Contacto
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -374,7 +353,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    //Descripcion
                     Text(
                         text = "Descripción",
                         fontSize = 20.sp,
@@ -393,7 +371,6 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(36.dp))
 
-                    //BARRA INFERIOR (precio y boton)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

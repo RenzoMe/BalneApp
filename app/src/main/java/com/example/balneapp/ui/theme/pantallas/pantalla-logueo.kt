@@ -28,13 +28,13 @@ fun PantallaLogueo(navController: NavController) {
 
     val azulColor = Color(0xFF0D075E)
     val celesteAgua = Color(0xFF00A3C4)
-    // box que contiene la pantalla
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
-        //Imagen de decoracion arriba a la derecha
+
         Image(
             painter = painterResource(id = R.drawable.decoracion),
             contentDescription = "Decoración de fondo",
@@ -53,7 +53,7 @@ fun PantallaLogueo(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            //logo de balneapp
+
             Image(
                 painter = painterResource(id = R.drawable.logobalneapp),
                 contentDescription = "Logo",
@@ -61,7 +61,7 @@ fun PantallaLogueo(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            // texto de bienvenida
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.Start
@@ -81,7 +81,7 @@ fun PantallaLogueo(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            //campo tipo input de correo
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(text = "Correo electrónico", fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
@@ -97,7 +97,7 @@ fun PantallaLogueo(navController: NavController) {
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
-                //campo tipo input de contraseña
+
                 Text(text = "Contraseña", fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(4.dp))
                 TextField(
@@ -113,7 +113,7 @@ fun PantallaLogueo(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(8.dp))
-            // texto de olvidastew tu contraseña?
+
             Text(
                 text = "¿Olvidaste tu contraseña?",
                 fontSize = 12.sp,
@@ -124,7 +124,7 @@ fun PantallaLogueo(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-            //boton de inicio de sesion que lleva a la pantalla principal
+
             Button(
                 onClick = {
                     navController.navigate("principal") {
@@ -140,7 +140,7 @@ fun PantallaLogueo(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            //texto de complemento hacia la opcion de google
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -154,7 +154,7 @@ fun PantallaLogueo(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            //logo de google que ejemplifica la forma de iniciar sesion en google /luego debemos cambiarlo
+
             Image(
                 painter = painterResource(id = R.drawable.google),
                 contentDescription = "Google",
@@ -162,7 +162,6 @@ fun PantallaLogueo(navController: NavController) {
             )
 
             Spacer(modifier = Modifier.height(32.dp))
-            // texto de ayuda a registrarse
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,

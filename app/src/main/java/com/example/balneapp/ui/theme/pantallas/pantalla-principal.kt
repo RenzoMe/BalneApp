@@ -58,7 +58,6 @@ fun PantallaPrincipal(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Inicio (Seleccionado)
                     Box(
                         modifier = Modifier
                             .background(
@@ -83,7 +82,6 @@ fun PantallaPrincipal(navController: NavController) {
                         }
                     }
 
-                    // Favoritos
                     Box(
                         modifier = Modifier
                             .background(
@@ -109,7 +107,6 @@ fun PantallaPrincipal(navController: NavController) {
                         }
                     }
 
-                    // Explorar
                     Box(
                         modifier = Modifier
                             .background(
@@ -134,7 +131,6 @@ fun PantallaPrincipal(navController: NavController) {
                         }
                     }
 
-                    // Reservas
                     Box(
                         modifier = Modifier
                             .background(
@@ -160,7 +156,6 @@ fun PantallaPrincipal(navController: NavController) {
                         }
                     }
 
-                    // Perfil
                     Box(
                         modifier = Modifier
                             .background(
@@ -280,7 +275,6 @@ fun PantallaPrincipal(navController: NavController) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // CARD GOLONDRINAS -> Redirige a "golondrinas"
                     Card(
                         modifier = Modifier
                             .weight(1f)
@@ -381,7 +375,6 @@ fun PantallaPrincipal(navController: NavController) {
                         }
                     }
 
-                    // CARD OASIS -> Redirige a "oasis"
                     Card(
                         modifier = Modifier
                             .weight(1f)

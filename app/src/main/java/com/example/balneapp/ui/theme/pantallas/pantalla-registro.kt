@@ -32,13 +32,13 @@ fun PantallaRegistro(navController: NavController) {
     val azulOscuro = Color(0xFF0D075E)
     val celesteAgua = Color(0xFF00A3C4)
 
-    //contenedor de pantalla
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     )
-    //imagen decoracion arriba izquierda
+
      {
         Image(
             painter = painterResource(id = R.drawable.decoracion2),
@@ -59,7 +59,7 @@ fun PantallaRegistro(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(30.dp))
 
-            //imagen logo balneapp
+
             Image(
                 painter = painterResource(id = R.drawable.logobalneapp),
                 contentDescription = "Logo BalneApp",
@@ -72,7 +72,6 @@ fun PantallaRegistro(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             )
-            //"boton" volver hacia atras
             {
                 Box(
                     modifier = Modifier
@@ -91,7 +90,6 @@ fun PantallaRegistro(navController: NavController) {
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                //texto crea tu cuenta
                 Text(
                     text = "Creá tu cuenta",
                     fontSize = 22.sp,
@@ -101,7 +99,7 @@ fun PantallaRegistro(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            //campos input:
+
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Nombre completo",
@@ -185,7 +183,7 @@ fun PantallaRegistro(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-            //boton registro que lleva al logueo
+
             Button(
                 onClick = {
                     navController.navigate("logueo") {
@@ -206,7 +204,7 @@ fun PantallaRegistro(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            //texto acompaña al logo de google
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -220,7 +218,7 @@ fun PantallaRegistro(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(14.dp))
-                //logo de google para registrarse
+
             Image(
                 painter = painterResource(id = R.drawable.google),
                 contentDescription = "Registrarse con Google",

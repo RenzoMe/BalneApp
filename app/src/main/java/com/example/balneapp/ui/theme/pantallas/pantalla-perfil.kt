@@ -1,6 +1,5 @@
 package com.example.balneapp.ui.theme.pantallas
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +54,7 @@ fun PantallaPerfil(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Inicio
+
                     Box(
                         modifier = Modifier
                             .background(
@@ -64,8 +62,9 @@ fun PantallaPerfil(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clickable {
-                                navController.navigate("principal")
-
+                                navController.navigate("pantalla_principal") {
+                                    popUpTo("pantalla_principal") { inclusive = true }
+                                }
                             }
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
@@ -85,7 +84,6 @@ fun PantallaPerfil(navController: NavController) {
                         }
                     }
 
-                    // Favoritos
                     Box(
                         modifier = Modifier
                             .background(
@@ -110,7 +108,6 @@ fun PantallaPerfil(navController: NavController) {
                         }
                     }
 
-                    // Explorar
                     Box(
                         modifier = Modifier
                             .background(
@@ -137,7 +134,7 @@ fun PantallaPerfil(navController: NavController) {
                         }
                     }
 
-                    // Reservas
+
                     Box(
                         modifier = Modifier
                             .background(
@@ -162,7 +159,7 @@ fun PantallaPerfil(navController: NavController) {
                         }
                     }
 
-                    // Perfil
+
                     Box(
                         modifier = Modifier
                             .background(
@@ -242,61 +239,161 @@ fun PantallaPerfil(navController: NavController) {
                         .padding(horizontal = 24.dp, vertical = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    OpcionPerfilItem(iconRes = R.drawable.misdatos, titulo = "Mis datos")
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.misdatos),
+                            contentDescription = "Mis datos",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Mis datos",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(iconRes = R.drawable.misreservas, titulo = "Mis reservas")
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.misreservas),
+                            contentDescription = "Mis reservas",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Mis reservas",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(iconRes = R.drawable.favoritos, titulo = "Favoritos")
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.favoritos),
+                            contentDescription = "Favoritos",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Favoritos",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(iconRes = R.drawable.metodospago, titulo = "Métodos de pago")
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.metodospago),
+                            contentDescription = "Métodos de pago",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Métodos de pago",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(iconRes = R.drawable.configuracion, titulo = "Configuración")
+                
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.configuracion),
+                            contentDescription = "Configuración",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Configuración",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(iconRes = R.drawable.ayuda, titulo = "Ayuda")
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ayuda),
+                            contentDescription = "Ayuda",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Ayuda",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF222222)
+                        )
+                    }
                     HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
 
-                    OpcionPerfilItem(
-                        iconRes = R.drawable.cerrarsesion,
-                        titulo = "Cerrar sesión",
-                        colorTexto = rojoCerrarSesion,
-                    )
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.cerrarsesion),
+                            contentDescription = "Cerrar sesión",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Cerrar sesión",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = rojoCerrarSesion
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun OpcionPerfilItem(
-    @DrawableRes iconRes: Int,
-    titulo: String,
-    colorTexto: Color = Color(0xFF222222),
-    colorIcono: Color? = null
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = iconRes),
-            contentDescription = titulo,
-            modifier = Modifier.size(26.dp),
-            colorFilter = colorIcono?.let { ColorFilter.tint(it) }
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = titulo,
-            fontSize = 17.sp,
-            fontWeight = FontWeight.Medium,
-            color = colorTexto
-        )
     }
 }
 

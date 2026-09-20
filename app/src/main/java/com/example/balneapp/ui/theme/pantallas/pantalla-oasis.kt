@@ -97,7 +97,7 @@ fun PantallaOasis(navController: NavController) {
                         )
                     }
                 }
-                // MINi imagenes
+
                 Row(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -148,7 +148,7 @@ fun PantallaOasis(navController: NavController) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 24.dp)
                 ) {
-                    // Titulo balneario
+
                     Text(
                         text = "Balneario Oasis",
                         fontSize = 26.sp,
@@ -176,7 +176,7 @@ fun PantallaOasis(navController: NavController) {
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
-                    // area de reseñas y puntuacion
+
                     Surface(
                         shape = RoundedCornerShape(10.dp),
                         color = celesteInsignia
@@ -230,7 +230,7 @@ fun PantallaOasis(navController: NavController) {
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
-                    // titulo servicios
+
                     Text(
                         text = "Servicios",
                         fontSize = 15.sp,
@@ -240,12 +240,12 @@ fun PantallaOasis(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Imagenes de servicios
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        // Carpas
+
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_carpa),
@@ -261,7 +261,6 @@ fun PantallaOasis(navController: NavController) {
                             )
                         }
 
-                        // WiFi
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_wifi),
@@ -277,7 +276,6 @@ fun PantallaOasis(navController: NavController) {
                             )
                         }
 
-                        // Duchas
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_duchas),
@@ -293,7 +291,6 @@ fun PantallaOasis(navController: NavController) {
                             )
                         }
 
-                        // Quincho
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_quincho),
@@ -309,7 +306,6 @@ fun PantallaOasis(navController: NavController) {
                             )
                         }
 
-                        // Accesibilidad
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_accesibilidad),
@@ -325,7 +321,6 @@ fun PantallaOasis(navController: NavController) {
                             )
                         }
 
-                        // Pet Friendly
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(id = R.drawable.icono_mascotas),
@@ -343,7 +338,7 @@ fun PantallaOasis(navController: NavController) {
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
-                    //contacto
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -361,7 +356,7 @@ fun PantallaOasis(navController: NavController) {
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
-                    //descripcon titulo
+
                     Text(
                         text = "Descripción",
                         fontSize = 20.sp,
@@ -370,7 +365,7 @@ fun PantallaOasis(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.height(6.dp))
-                    //descripcion
+
                     Text(
                         text = "El mejor balneario para disfrutar en familia, desayuno y cena, restaurante, carpas y atención al detalle.",
                         fontSize = 16.sp,
@@ -379,7 +374,7 @@ fun PantallaOasis(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.height(36.dp))
-                    // barra inferior de precio y boton
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

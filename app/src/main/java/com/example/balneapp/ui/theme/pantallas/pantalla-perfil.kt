@@ -62,9 +62,8 @@ fun PantallaPerfil(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clickable {
-                                navController.navigate("pantalla_principal") {
-                                    popUpTo("pantalla_principal") { inclusive = true }
-                                }
+                                navController.navigate("principal")
+
                             }
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {

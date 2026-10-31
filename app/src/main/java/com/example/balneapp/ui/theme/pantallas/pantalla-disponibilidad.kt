@@ -19,11 +19,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -184,10 +181,10 @@ fun EncabezadoFlujoReserva(titulo: String, onVolver: () -> Unit) {
             onClick = onVolver,
             modifier = Modifier.align(Alignment.CenterStart).padding(start = 8.dp).size(42.dp)
         ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            Image(
+                painter = painterResource(R.drawable.ic_balneapp_back),
                 contentDescription = "Volver",
-                tint = Color(0xFF313131)
+                modifier = Modifier.size(22.dp)
             )
         }
         Text(
@@ -253,7 +250,7 @@ private fun OpcionEquipamiento(
         ) {
             Image(
                 painter = painterResource(
-                    if (tipoServicio == TipoServicioReserva.CARPA) R.drawable.icono_carpa
+                    if (tipoServicio == TipoServicioReserva.CARPA) R.drawable.ic_balneapp_tent
                     else R.drawable.ic_sombrilla
                 ),
                 contentDescription = null,

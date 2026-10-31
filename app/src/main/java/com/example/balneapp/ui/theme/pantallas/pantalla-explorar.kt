@@ -8,20 +8,16 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,10 +70,9 @@ fun PantallaExplorar(navController: NavController) {
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Home,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_home),
                                 contentDescription = "Inicio",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -100,10 +95,9 @@ fun PantallaExplorar(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_favorite),
                                 contentDescription = "Favoritos",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -125,7 +119,7 @@ fun PantallaExplorar(navController: NavController) {
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
-                                painter = painterResource(id = R.drawable.logo),
+                                painter = painterResource(id = R.drawable.ic_balneapp_explore_logo),
                                 contentDescription = "Explorar",
                                 modifier = Modifier.size(26.dp)
                             )
@@ -148,10 +142,9 @@ fun PantallaExplorar(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_reservation),
                                 contentDescription = "Reservas",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -175,10 +168,9 @@ fun PantallaExplorar(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_profile),
                                 contentDescription = "Perfil",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -325,11 +317,11 @@ fun PantallaExplorar(navController: NavController) {
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = "Rating",
-                                    tint = Color(0xFFFFC107),
-                                    modifier = Modifier.size(14.dp)
+                                Image(
+                                    painter = painterResource(R.drawable.ic_balneapp_review),
+                                    contentDescription = "Puntuación",
+                                    modifier = Modifier.size(14.dp),
+                                    colorFilter = ColorFilter.tint(Color(0xFFFFC107))
                                 )
                                 Spacer(modifier = Modifier.width(2.dp))
                                 Text(

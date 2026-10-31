@@ -8,11 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,10 +64,9 @@ fun PantallaPerfil(navController: NavController) {
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Home,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_home),
                                 contentDescription = "Inicio",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -94,10 +88,9 @@ fun PantallaPerfil(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_favorite),
                                 contentDescription = "Favoritos",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -122,7 +115,7 @@ fun PantallaPerfil(navController: NavController) {
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
-                                painter = painterResource(id = R.drawable.logo),
+                                painter = painterResource(id = R.drawable.ic_balneapp_explore_logo),
                                 contentDescription = "Explorar",
                                 modifier = Modifier.size(26.dp)
                             )
@@ -146,10 +139,9 @@ fun PantallaPerfil(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_reservation),
                                 contentDescription = "Reservas",
-                                tint = Color.Gray,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -171,10 +163,9 @@ fun PantallaPerfil(navController: NavController) {
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_profile),
                                 contentDescription = "Perfil",
-                                tint = celesteAgua,
                                 modifier = Modifier.size(26.dp)
                             )
                             Text(
@@ -271,7 +262,7 @@ fun PantallaPerfil(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.misreservas),
+                            painter = painterResource(id = R.drawable.ic_balneapp_reservation),
                             contentDescription = "Mis reservas",
                             modifier = Modifier.size(26.dp)
                         )
@@ -293,7 +284,7 @@ fun PantallaPerfil(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.favoritos),
+                            painter = painterResource(id = R.drawable.ic_balneapp_favorite),
                             contentDescription = "Favoritos",
                             modifier = Modifier.size(26.dp)
                         )

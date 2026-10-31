@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="240" viewBox="0 0 480 240" role="img" aria-label="Iconos de restaurante y kiosco de BalneApp">
+  <rect width="480" height="240" fill="#FFFFFF"/>
+  <g fill="none" stroke="#0B6F78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(60 60) scale(5)">
+      <path d="M5 3v5a3 3 0 0 0 6 0V3M6.7 3v5M9.3 3v5M8 11v10M18 3c-2.6 2.7-3.5 5-3.5 6.6 0 1.4 1 2.4 2.5 2.4h1V3Zm-1 9v9"/>
+    </g>
+    <g transform="translate(300 60) scale(5)">
+      <path d="M4 10v11h16V10M3 9l2-5h14l2 5M3 9c0 2 3 2 3 0 0 2 3 2 3 0 0 2 3 2 3 0 0 2 3 2 3 0 0 2 3 2 3 0 0 2 3 2 3 0M8 13h9v4H8v-4Zm-2 4v4m2-6h9"/>
+    </g>
+  </g>
+</svg>

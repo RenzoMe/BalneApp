@@ -9,12 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +59,7 @@ fun PantallaResenas(navController: NavController) {
                             navController.navigateToBalneAppTab("principal")
                         }
                     ) {
-                        Icon(Icons.Default.Home, contentDescription = "Inicio", tint = textoGris)
+                        Image(painter = painterResource(R.drawable.ic_balneapp_home), contentDescription = "Inicio", modifier = Modifier.size(22.dp))
                         Text("Inicio", fontSize = 11.sp, color = textoGris)
                     }
 
@@ -72,7 +67,7 @@ fun PantallaResenas(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { navController.navigateToBalneAppTab("favoritos") }
                     ) {
-                        Icon(Icons.Default.FavoriteBorder, contentDescription = "Favoritos", tint = textoGris)
+                        Image(painter = painterResource(R.drawable.ic_balneapp_favorite), contentDescription = "Favoritos", modifier = Modifier.size(22.dp))
                         Text("Favoritos", fontSize = 11.sp, color = textoGris)
                     }
 
@@ -81,7 +76,7 @@ fun PantallaResenas(navController: NavController) {
                         modifier = Modifier.clickable { navController.navigate("explorar") }
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.logo),
+                            painter = painterResource(id = R.drawable.ic_balneapp_explore_logo),
                             contentDescription = "Explorar",
                             modifier = Modifier.size(24.dp)
                         )
@@ -92,7 +87,7 @@ fun PantallaResenas(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { navController.navigateToBalneAppTab("reservas") }
                     ) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Reservas", tint = textoGris)
+                        Image(painter = painterResource(R.drawable.ic_balneapp_reservation), contentDescription = "Reservas", modifier = Modifier.size(22.dp))
                         Text("Reservas", fontSize = 11.sp, color = textoGris)
                     }
 
@@ -100,7 +95,7 @@ fun PantallaResenas(navController: NavController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable { navController.navigate("perfil") }
                     ) {
-                        Icon(Icons.Default.Person, contentDescription = "Perfil", tint = textoGris)
+                        Image(painter = painterResource(R.drawable.ic_balneapp_profile), contentDescription = "Perfil", modifier = Modifier.size(22.dp))
                         Text("Perfil", fontSize = 11.sp, color = textoGris)
                     }
                 }
@@ -130,10 +125,10 @@ fun PantallaResenas(navController: NavController) {
                     color = Color.White
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        Image(
+                            painter = painterResource(R.drawable.ic_balneapp_back),
                             contentDescription = "Volver",
-                            tint = Color(0xFF3BB3C6)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 }
@@ -272,11 +267,11 @@ private fun TarjetaResenaItem(
             
             Row {
                 repeat(estrellas) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "Estrella",
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(16.dp)
+                    Image(
+                        painter = painterResource(R.drawable.ic_balneapp_review),
+                        contentDescription = "Puntuación",
+                        modifier = Modifier.size(16.dp),
+                        colorFilter = ColorFilter.tint(Color(0xFFFFC107))
                     )
                 }
             }

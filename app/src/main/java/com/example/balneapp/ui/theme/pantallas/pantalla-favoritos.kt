@@ -1,6 +1,5 @@
 package com.example.balneapp.ui.theme.pantallas
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,11 +21,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -43,10 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -153,7 +147,11 @@ fun PantallaFavoritos(
                         contentDescription = "Volver al inicio",
                         onClick = { navController.navigateToBalneAppTab("principal") }
                     ) {
-                        Icon(Icons.Default.Menu, contentDescription = null, tint = Color(0xFF555555))
+                        Image(
+                            painter = painterResource(R.drawable.ic_balneapp_back),
+                            contentDescription = "Volver al inicio",
+                            modifier = Modifier.size(22.dp)
+                        )
                     }
 
                     Box {
@@ -264,27 +262,11 @@ private fun CircularAction(
 
 @Composable
 private fun SliderFilterIcon() {
-    Canvas(modifier = Modifier.size(22.dp)) {
-        val strokeWidth = 1.7.dp.toPx()
-        val stroke = Stroke(width = strokeWidth, cap = StrokeCap.Round)
-        val tracks = listOf(size.width * 0.26f, size.width * 0.5f, size.width * 0.74f)
-        tracks.forEachIndexed { index, x ->
-            drawLine(
-                color = Color(0xFF555555),
-                start = Offset(x, size.height * 0.16f),
-                end = Offset(x, size.height * 0.84f),
-                strokeWidth = strokeWidth,
-                cap = StrokeCap.Round
-            )
-            val knobY = when (index) {
-                0 -> size.height * 0.42f
-                1 -> size.height * 0.64f
-                else -> size.height * 0.34f
-            }
-            drawCircle(Color.White, radius = 2.6.dp.toPx(), center = Offset(x, knobY))
-            drawCircle(Color(0xFF555555), radius = 2.6.dp.toPx(), center = Offset(x, knobY), style = stroke)
-        }
-    }
+    Image(
+        painter = painterResource(R.drawable.ic_balneapp_filter),
+        contentDescription = "Filtros",
+        modifier = Modifier.size(22.dp)
+    )
 }
 
 @Composable
@@ -319,10 +301,9 @@ private fun TarjetaFavorito(
                     .size(28.dp)
                     .background(Color.White.copy(alpha = 0.92f), CircleShape)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
+                Image(
+                    painter = painterResource(R.drawable.ic_balneapp_favorite_filled),
                     contentDescription = "Quitar de favoritos",
-                    tint = Color(0xFF72C6D1),
                     modifier = Modifier.size(17.dp)
                 )
             }
@@ -366,11 +347,11 @@ private fun TarjetaFavorito(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = Color(0xFFFFC107),
-                        modifier = Modifier.size(13.dp)
+                    Image(
+                        painter = painterResource(R.drawable.ic_balneapp_review),
+                        contentDescription = "Puntuación",
+                        modifier = Modifier.size(13.dp),
+                        colorFilter = ColorFilter.tint(Color(0xFFFFC107))
                     )
                     Text(
                         text = "${String.format(Locale("es", "AR"), "%.1f", favorito.puntuacion)} ",

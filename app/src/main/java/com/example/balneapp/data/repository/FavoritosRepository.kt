@@ -1,25 +1,16 @@
 package com.example.balneapp.data.repository
 
-import com.example.balneapp.ui.model.BalnearioIds
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import com.example.balneapp.data.local.FavoritoDao
+import com.example.balneapp.data.local.FavoritoEntity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-/** Estado en memoria compartido por las pantallas que muestran balnearios. */
-object FavoritosRepository {
-    private val _idsFavoritos = MutableStateFlow(
-        setOf(BalnearioIds.GOLONDRINAS, BalnearioIds.OASIS)
-    )
-    val idsFavoritos: StateFlow<Set<String>> = _idsFavoritos.asStateFlow()
+class FavoritosRepository(private val dao: FavoritoDao) {
+    val idsFavoritos: Flow<Set<String>> = dao.observarIds().map { it.toSet() }
 
-    fun alternar(id: String) {
-        _idsFavoritos.update { actuales ->
-            if (id in actuales) actuales - id else actuales + id
-        }
+    suspend fun alternar(id: String) {
+        if (dao.existe(id)) dao.eliminar(id) else dao.insertar(FavoritoEntity(id))
     }
 
-    fun quitar(id: String) {
-        _idsFavoritos.update { actuales -> actuales - id }
-    }
+    suspend fun quitar(id: String) = dao.eliminar(id)
 }

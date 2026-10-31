@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -221,10 +220,9 @@ private fun TarjetaReserva(reserva: ReservaConfirmada, modifier: Modifier = Modi
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = null,
-                        tint = Color(0xFF656565),
+                    Image(
+                        painter = painterResource(R.drawable.ic_balneapp_profile),
+                        contentDescription = "Personas",
                         modifier = Modifier.size(13.dp)
                     )
                     Spacer(modifier = Modifier.width(3.dp))

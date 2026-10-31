@@ -9,16 +9,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
 import com.example.balneapp.ui.components.BotonFavoritoBalneario
+import com.example.balneapp.ui.components.FilaServiciosBalneario
 import com.example.balneapp.ui.model.BalnearioIds
 
 @Composable
@@ -73,10 +72,10 @@ fun PantallaGolondrinas(navController: NavController) {
                     color = Color.White
                 ) {
                     Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        Image(
+                            painter = painterResource(R.drawable.ic_balneapp_back),
                             contentDescription = "Volver",
-                            tint = Color(0xFF3BB3C6)
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 }
@@ -176,11 +175,11 @@ fun PantallaGolondrinas(navController: NavController) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "Estrella",
-                                tint = Color(0xFFFFC107),
-                                modifier = Modifier.size(18.dp)
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_review),
+                                contentDescription = "Puntuación",
+                                modifier = Modifier.size(18.dp),
+                                colorFilter = ColorFilter.tint(Color(0xFFFFC107))
                             )
                             Text(
                                 text = "4.8",
@@ -203,11 +202,11 @@ fun PantallaGolondrinas(navController: NavController) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = "Ver Reseñas",
-                                    tint = celesteTexto,
-                                    modifier = Modifier.size(16.dp)
+                                Image(
+                                    painter = painterResource(R.drawable.ic_balneapp_review),
+                                    contentDescription = "Ver reseñas",
+                                    modifier = Modifier.size(16.dp),
+                                    colorFilter = ColorFilter.tint(celesteTexto)
                                 )
                                 Text(
                                     text = "Reseñas",
@@ -230,101 +229,7 @@ fun PantallaGolondrinas(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Carpas
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_carpa),
-                                contentDescription = "Carpas",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Carpas",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_wifi),
-                                contentDescription = "WiFi",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "WiFi",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_duchas),
-                                contentDescription = "Duchas",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Duchas",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_quincho),
-                                contentDescription = "Quincho",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Quincho",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_accesibilidad),
-                                contentDescription = "Accesibilidad",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Accesibilidad",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.icono_mascotas),
-                                contentDescription = "Pet Friendly",
-                                modifier = Modifier.size(38.dp)
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "Pet Friendly",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = textoOscuro
-                            )
-                        }
-                    }
+                    FilaServiciosBalneario()
 
                     Spacer(modifier = Modifier.height(24.dp))
 

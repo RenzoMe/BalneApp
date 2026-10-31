@@ -12,9 +12,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class FavoritosViewModel : ViewModel() {
+class FavoritosViewModel(private val repository: FavoritosRepository) : ViewModel() {
     private val balnearios = listOf(
         BalnearioFavoritoUi(
             id = BalnearioIds.GOLONDRINAS,
@@ -49,7 +51,7 @@ class FavoritosViewModel : ViewModel() {
 
     private val _orden = MutableStateFlow(OrdenFavoritos.RECOMENDADOS)
     val uiState: StateFlow<FavoritosUiState> = combine(
-        FavoritosRepository.idsFavoritos,
+        repository.idsFavoritos,
         _orden
     ) { idsFavoritos, orden ->
         val favoritos = balnearios.filter { it.id in idsFavoritos }
@@ -63,12 +65,12 @@ class FavoritosViewModel : ViewModel() {
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = FavoritosUiState(
-            favoritos = balnearios.filter { it.id in FavoritosRepository.idsFavoritos.value }
+            favoritos = emptyList()
         )
     )
 
     fun quitarFavorito(id: String) {
-        FavoritosRepository.quitar(id)
+        viewModelScope.launch { repository.quitar(id) }
     }
 
     fun ordenarPor(orden: OrdenFavoritos) {

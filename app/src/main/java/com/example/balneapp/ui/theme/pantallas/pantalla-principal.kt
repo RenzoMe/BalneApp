@@ -5,15 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -31,157 +26,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
+import com.example.balneapp.navigation.navigateToBalneAppTab
+import com.example.balneapp.ui.components.BalneAppBottomBar
+import com.example.balneapp.ui.components.BotonFavoritoBalneario
+import com.example.balneapp.ui.model.BalnearioIds
 
 @Composable
 fun PantallaPrincipal(navController: NavController) {
     var searchText by remember { mutableStateOf("") }
-    val selectedTab = 0
 
-    val grisBarra = Color(0xFFFAFAFA)
     val azulOscuro = Color(0xFF0D075E)
     val celesteAgua = Color(0xFF00A3C4)
     val cardBgColor = Color(0xFFF0FDFF)
-    val seleccionBgColor = Color(0xFFCFF5FC)
 
     Scaffold(
         bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(5.dp),
-                color = grisBarra,
-                shadowElevation = 2.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp, horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 0) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .padding(horizontal = 14.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Home,
-                                contentDescription = "Inicio",
-                                tint = celesteAgua,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Inicio",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = celesteAgua
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 1) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigate("favoritos") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "Favoritos",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Favoritos",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 2) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigate("explorar") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.logo),
-                                contentDescription = "Explorar",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Explorar",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 3) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigate("reservas") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = "Reservas",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Reservas",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 4) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigate("perfil") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Perfil",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Perfil",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-            }
+            BalneAppBottomBar(
+                selectedRoute = "principal",
+                onDestinationSelected = navController::navigateToBalneAppTab
+            )
         }
     ) { innerPadding ->
         Box(
@@ -292,23 +155,13 @@ fun PantallaPrincipal(navController: NavController) {
                                         .height(110.dp),
                                     contentScale = ContentScale.Crop
                                 )
-                                Surface(
-                                    modifier = Modifier
-                                        .padding(6.dp)
-                                        .size(24.dp)
-                                        .align(Alignment.TopEnd),
-                                    shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.FavoriteBorder,
-                                            contentDescription = "Favorito",
-                                            tint = Color.Gray,
-                                            modifier = Modifier.size(14.dp)
-                                        )
-                                    }
-                                }
+                                BotonFavoritoBalneario(
+                                    balnearioId = BalnearioIds.GOLONDRINAS,
+                                    modifier = Modifier.padding(6.dp).align(Alignment.TopEnd),
+                                    tamanoBoton = 30.dp,
+                                    tamanoIcono = 16.dp,
+                                    colorActivo = celesteAgua
+                                )
                             }
 
                             Column(modifier = Modifier.padding(10.dp)) {
@@ -392,23 +245,13 @@ fun PantallaPrincipal(navController: NavController) {
                                         .height(110.dp),
                                     contentScale = ContentScale.Crop
                                 )
-                                Surface(
-                                    modifier = Modifier
-                                        .padding(6.dp)
-                                        .size(24.dp)
-                                        .align(Alignment.TopEnd),
-                                    shape = CircleShape,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = Icons.Default.FavoriteBorder,
-                                            contentDescription = "Favorito",
-                                            tint = Color.Gray,
-                                            modifier = Modifier.size(14.dp)
-                                        )
-                                    }
-                                }
+                                BotonFavoritoBalneario(
+                                    balnearioId = BalnearioIds.OASIS,
+                                    modifier = Modifier.padding(6.dp).align(Alignment.TopEnd),
+                                    tamanoBoton = 30.dp,
+                                    tamanoIcono = 16.dp,
+                                    colorActivo = celesteAgua
+                                )
                             }
 
                             Column(modifier = Modifier.padding(10.dp)) {

@@ -2,7 +2,6 @@ package com.example.balneapp.ui.theme.pantallas
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,27 +10,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,8 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,34 +43,25 @@ import androidx.navigation.NavController
 import com.example.balneapp.R
 import com.example.balneapp.navigation.navigateToBalneAppTab
 import com.example.balneapp.ui.components.BalneAppBottomBar
-import com.example.balneapp.ui.components.CalendarioReserva
-import com.example.balneapp.ui.model.EquipamientoReserva
-import com.example.balneapp.ui.model.ReservasUiState
+import com.example.balneapp.ui.model.ReservaConfirmada
 import com.example.balneapp.ui.viewmodel.ReservasViewModel
+import java.text.NumberFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-private val colorTurquesa = Color(0xFF68D2DE)
-private val fondoReserva = Color(0xFFF0F0F0)
-private val colorBotonReserva = Color(0xFF24AEBB)
-private val colorEquipamiento = Color(0xFFB7EDF7)
+private val fondoListaReservas = Color(0xFFFDF8F4)
+private val formatoPrecioReserva = NumberFormat.getIntegerInstance(Locale("es", "AR"))
+private val formatoFechaReserva = DateTimeFormatter.ofPattern("d 'de' MMMM, yyyy", Locale("es", "AR"))
 
 @Composable
 fun PantallaReservas(
     navController: NavController,
     viewModel: ReservasViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = androidx.compose.runtime.remember { SnackbarHostState() }
-
-    LaunchedEffect(uiState.mensaje) {
-        uiState.mensaje?.let { mensaje ->
-            snackbarHostState.showSnackbar(mensaje)
-            viewModel.limpiarMensaje()
-        }
-    }
+    val reservas by viewModel.reservas.collectAsState()
 
     Scaffold(
-        containerColor = fondoReserva,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = fondoListaReservas,
         bottomBar = {
             BalneAppBottomBar(
                 selectedRoute = "reservas",
@@ -88,221 +73,177 @@ fun PantallaReservas(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(fondoReserva)
+                .background(fondoListaReservas)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
         ) {
-            EncabezadoReserva(onVolver = {
-                if (!navController.popBackStack()) navController.navigate("principal")
-            })
+            Spacer(modifier = Modifier.height(18.dp))
+            Image(
+                painter = painterResource(R.drawable.balneapp),
+                contentDescription = "BalneApp",
+                modifier = Modifier.width(160.dp).height(34.dp),
+                contentScale = ContentScale.Fit
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "Tus reservas",
+                color = Color(0xFF171717),
+                fontSize = 26.sp,
+                lineHeight = 31.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = if (reservas.isEmpty()) "Consultá acá los balnearios que reservaste."
+                else "Tenés ${reservas.size} reserva${if (reservas.size == 1) "" else "s"} confirmada${if (reservas.size == 1) "" else "s"}.",
+                color = Color(0xFF737373),
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 8.dp)
-                ) {
-                    Spacer(modifier = Modifier.height(14.dp))
-                    CalendarioReserva(
-                        mes = uiState.mes,
-                        diasSeleccionados = uiState.diasSeleccionados,
-                        mostrarCalendarioInteractivo = uiState.mostrarCalendarioInteractivo,
-                        onMesAnterior = viewModel::mesAnterior,
-                        onMesSiguiente = viewModel::mesSiguiente,
-                        onSeleccionarDia = viewModel::seleccionarDia,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
-                        horizontalArrangement = Arrangement.spacedBy(24.dp)
-                    ) {
-                        EquipamientoChip(
-                            label = EquipamientoReserva.CARPAS.etiqueta,
-                            selected = EquipamientoReserva.CARPAS in uiState.equipamiento,
-                            onClick = { viewModel.alternarEquipamiento(EquipamientoReserva.CARPAS) },
-                            modifier = Modifier.weight(1f)
-                        )
-                        EquipamientoChip(
-                            label = EquipamientoReserva.SOMBRILLAS.etiqueta,
-                            selected = EquipamientoReserva.SOMBRILLAS in uiState.equipamiento,
-                            onClick = { viewModel.alternarEquipamiento(EquipamientoReserva.SOMBRILLAS) },
-                            modifier = Modifier.weight(1f)
-                        )
+            if (reservas.isEmpty()) {
+                EstadoReservasVacio(
+                    onExplorar = { navController.navigateToBalneAppTab("principal") }
+                )
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                    reservas.chunked(2).forEach { fila ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            fila.forEach { reserva ->
+                                TarjetaReserva(
+                                    reserva = reserva,
+                                    modifier = Modifier.weight(1f)
+                                )
+                            }
+                            if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
-
-                    Spacer(modifier = Modifier.height(22.dp))
-                    SelectorPersonas(
-                        cantidad = uiState.personas,
-                        onDisminuir = { viewModel.cambiarPersonas(-1) },
-                        onAumentar = { viewModel.cambiarPersonas(1) }
-                    )
-
-                    Spacer(modifier = Modifier.height(32.dp))
-                    FilaMonto(total = uiState.total)
-                    Spacer(modifier = Modifier.height(96.dp))
-                }
-
-                Button(
-                    onClick = viewModel::confirmarReserva,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth(0.88f)
-                        .padding(bottom = 22.dp)
-                        .height(48.dp),
-                    shape = RoundedCornerShape(26.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorBotonReserva),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
-                ) {
-                    Text(
-                        text = "Confirmar y Pagar",
-                        color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic
-                    )
                 }
             }
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
 @Composable
-private fun EncabezadoReserva(onVolver: () -> Unit) {
-    Box(
+private fun EstadoReservasVacio(onExplorar: () -> Unit) {
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .height(72.dp)
-            .background(colorTurquesa)
+            .padding(top = 68.dp, bottom = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        IconButton(
-            onClick = onVolver,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 14.dp)
-                .size(40.dp)
-                .background(Color.White, CircleShape)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
-                tint = Color(0xFF28AEBB),
-                modifier = Modifier.size(22.dp)
-            )
-        }
         Image(
-            painter = painterResource(R.drawable.reserva_logo),
-            contentDescription = "BalneApp",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .width(190.dp)
-                .height(42.dp),
-            contentScale = ContentScale.Fit
-        )
-    }
-}
-
-@Composable
-private fun EquipamientoChip(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier.height(40.dp).clickable(onClick = onClick),
-        shape = RoundedCornerShape(22.dp),
-        color = if (selected) colorEquipamiento else Color.White
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = label,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic,
-                color = Color.Black
-            )
-        }
-    }
-}
-
-@Composable
-private fun SelectorPersonas(
-    cantidad: Int,
-    onDisminuir: () -> Unit,
-    onAumentar: () -> Unit
-) {
-    Box(modifier = Modifier.fillMaxWidth().height(64.dp)) {
-        Image(
-            painter = painterResource(R.drawable.reserva_personas),
+            painter = painterResource(R.drawable.misreservas),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            modifier = Modifier.size(120.dp),
+            contentScale = ContentScale.Fit
         )
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 68.dp)
-                .width(142.dp)
-                .height(48.dp)
-                .background(Color.White),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text(
-                text = cantidad.toString() + " Personas",
-                color = Color(0xFF111111),
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold
-            )
+        Spacer(modifier = Modifier.height(18.dp))
+        Text(
+            text = "Todavía no tenés reservas",
+            color = Color(0xFF292929),
+            fontSize = 17.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = "Cuando confirmes una, vas a verla acá.",
+            color = Color(0xFF777777),
+            fontSize = 13.sp
+        )
+        Spacer(modifier = Modifier.height(18.dp))
+        Button(onClick = onExplorar) {
+            Text("Explorar balnearios")
         }
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 65.dp)
-                .size(width = 45.dp, height = 48.dp)
-                .clickable(onClick = onDisminuir)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 4.dp)
-                .size(width = 45.dp, height = 48.dp)
-                .clickable(onClick = onAumentar)
-        )
     }
 }
 
 @Composable
-private fun FilaMonto(total: Int) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
+private fun TarjetaReserva(reserva: ReservaConfirmada, modifier: Modifier = Modifier) {
+    val detalle = reserva.detalle
+
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFCFF7FC)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.reserva_dinero),
-            contentDescription = "Monto de reserva",
-            modifier = Modifier.size(48.dp),
-            contentScale = ContentScale.Fit
-        )
-        Spacer(modifier = Modifier.width(28.dp))
-        Text(
-            text = "Monto:",
-            color = Color.Black,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "$" + total,
-            color = Color.Black,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Italic,
-            modifier = Modifier.padding(end = 38.dp)
-        )
+        Column {
+            Box {
+                Image(
+                    painter = painterResource(detalle.balneario.imagenResId),
+                    contentDescription = detalle.balneario.nombre,
+                    modifier = Modifier.fillMaxWidth().height(106.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(6.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color.White.copy(alpha = 0.94f))
+                        .padding(horizontal = 7.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = Color(0xFF32986B),
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text("Confirmada", color = Color(0xFF3B7659), fontSize = 8.sp, fontWeight = FontWeight.Medium)
+                }
+            }
+
+            Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 7.dp)) {
+                Text(
+                    text = detalle.balneario.nombre,
+                    color = Color(0xFF1E1E1E),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = formatoFechaReserva.format(detalle.fecha)
+                        .replaceFirstChar { it.titlecase(Locale("es", "AR")) },
+                    color = Color(0xFF555555),
+                    fontSize = 10.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Color(0xFF656565),
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(3.dp))
+                    Text(
+                        text = "${detalle.personas} personas · ${detalle.servicioResumen}",
+                        color = Color(0xFF666666),
+                        fontSize = 9.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Spacer(modifier = Modifier.height(7.dp))
+                Text(
+                    text = "$" + formatoPrecioReserva.format(detalle.total),
+                    color = Color(0xFF111111),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
 }

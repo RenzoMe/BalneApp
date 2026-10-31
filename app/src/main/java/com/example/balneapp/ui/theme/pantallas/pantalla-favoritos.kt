@@ -215,18 +215,23 @@ fun PantallaFavoritos(
                         modifier = Modifier.padding(top = 16.dp)
                     )
                 } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(18.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        uiState.favoritos.forEach { favorito ->
-                            TarjetaFavorito(
-                                favorito = favorito,
-                                modifier = Modifier.weight(1f),
-                                onQuitar = { viewModel.quitarFavorito(favorito.id) },
-                                onAbrir = { route -> navController.navigate(route) }
-                            )
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        uiState.favoritos.chunked(2).forEach { fila ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(18.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                fila.forEach { favorito ->
+                                    TarjetaFavorito(
+                                        favorito = favorito,
+                                        modifier = Modifier.weight(1f),
+                                        onQuitar = { viewModel.quitarFavorito(favorito.id) },
+                                        onAbrir = { route -> navController.navigate(route) }
+                                    )
+                                }
+                                if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
                 }

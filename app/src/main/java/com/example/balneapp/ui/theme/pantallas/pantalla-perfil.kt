@@ -63,7 +63,7 @@ fun PantallaPerfil(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clickable {
-                                navController.navigate("principal")
+                                navController.navigateToBalneAppTab("principal")
 
                             }
                             .padding(horizontal = 14.dp, vertical = 6.dp)

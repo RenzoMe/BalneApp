@@ -61,7 +61,7 @@ fun PantallaResenas(navController: NavController) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.clickable {
-                            navController.navigate("principal")
+                            navController.navigateToBalneAppTab("principal")
                         }
                     ) {
                         Icon(Icons.Default.Home, contentDescription = "Inicio", tint = textoGris)

@@ -6,8 +6,7 @@ fun NavController.navigateToBalneAppTab(route: String) {
     if (currentDestination?.route == route) return
 
     navigate(route) {
-        popUpTo("principal") { saveState = true }
+        popUpTo("principal") { inclusive = false }
         launchSingleTop = true
-        restoreState = true
     }
 }

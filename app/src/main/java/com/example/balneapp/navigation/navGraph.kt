@@ -1,6 +1,8 @@
 package com.example.balneapp.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,6 +50,20 @@ fun NavGraph() {
         // reservas
         composable("reservas") {
             PantallaReservas(navController = navController)
+        }
+
+        composable(
+            route = "disponibilidad/{balnearioId}",
+            arguments = listOf(navArgument("balnearioId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            PantallaDisponibilidad(
+                navController = navController,
+                balnearioId = backStackEntry.arguments?.getString("balnearioId").orEmpty()
+            )
+        }
+
+        composable("resumenReserva") {
+            PantallaResumenReserva(navController = navController)
         }
 
         //perfil

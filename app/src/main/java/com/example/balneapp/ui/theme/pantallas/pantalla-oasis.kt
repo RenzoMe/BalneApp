@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -29,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
+import com.example.balneapp.ui.components.BotonFavoritoBalneario
+import com.example.balneapp.ui.model.BalnearioIds
 
 @Composable
 fun PantallaOasis(navController: NavController) {
@@ -80,23 +81,15 @@ fun PantallaOasis(navController: NavController) {
                     }
                 }
 
-                Surface(
+                BotonFavoritoBalneario(
+                    balnearioId = BalnearioIds.OASIS,
                     modifier = Modifier
                         .statusBarsPadding()
                         .padding(end = 16.dp, top = 8.dp)
-                        .size(42.dp)
                         .align(Alignment.TopEnd),
-                    shape = CircleShape,
-                    color = Color.White
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorito",
-                            tint = Color(0xFF00B5D8)
-                        )
-                    }
-                }
+                    colorActivo = Color(0xFF00B5D8),
+                    colorInactivo = Color(0xFF00B5D8)
+                )
 
                 Row(
                     modifier = Modifier
@@ -396,7 +389,7 @@ fun PantallaOasis(navController: NavController) {
                         }
 
                         Button(
-                            onClick = { /* Sin funcionalidad/solo de vista */ },
+                            onClick = { navController.navigate("disponibilidad/${BalnearioIds.OASIS}") },
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = celesteBoton),
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)

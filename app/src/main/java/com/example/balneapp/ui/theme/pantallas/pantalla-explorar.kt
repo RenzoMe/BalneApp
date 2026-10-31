@@ -32,6 +32,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
 import com.example.balneapp.navigation.navigateToBalneAppTab
+import com.example.balneapp.ui.components.BotonFavoritoBalneario
+import com.example.balneapp.ui.model.BalnearioIds
 
 @Composable
 fun PantallaExplorar(navController: NavController) {
@@ -67,7 +69,7 @@ fun PantallaExplorar(navController: NavController) {
                                 shape = RoundedCornerShape(20.dp)
                             )
                             .clickable {
-                                navController.navigate("principal")
+                                navController.navigateToBalneAppTab("principal")
                             }
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
@@ -308,11 +310,11 @@ fun PantallaExplorar(navController: NavController) {
                                 fontWeight = FontWeight.Bold,
                                 color = azulOscuro
                             )
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "Favorito",
-                                tint = Color.DarkGray,
-                                modifier = Modifier.size(22.dp)
+                            BotonFavoritoBalneario(
+                                balnearioId = BalnearioIds.HORIZONTE,
+                                tamanoBoton = 32.dp,
+                                tamanoIcono = 20.dp,
+                                colorFondo = Color.Transparent
                             )
                         }
 

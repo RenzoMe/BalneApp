@@ -1,7 +1,6 @@
 package com.example.balneapp.ui.theme.pantallas
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -16,24 +15,27 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
+import com.example.balneapp.navigation.AppRoute
+import com.example.balneapp.ui.viewmodel.PerfilViewModel
+import com.example.balneapp.ui.viewmodel.balneAppViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 
 @Composable
-fun PantallaInicio(navController: NavController) {
+fun PantallaInicio(
+    navController: NavController,
+    viewModel: PerfilViewModel = balneAppViewModel()
+) {
     LaunchedEffect(Unit) {
-        delay(2000)
-        navController.navigate("logueo") {
-            popUpTo("inicio") { inclusive = true }
+        val haySesion = viewModel.sesionIniciada.first { it != null } == true
+        delay(1500)
+        navController.navigate(if (haySesion) AppRoute.Inicio.route else AppRoute.Login.route) {
+            popUpTo(AppRoute.Splash.route) { inclusive = true }
+            launchSingleTop = true
         }
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                navController.navigate("logueo") {
-                    popUpTo("inicio") { inclusive = true }
-                }
-            }
+        modifier = Modifier.fillMaxSize()
     ) {
         Image(
             painter = painterResource(id = R.drawable.fondo),

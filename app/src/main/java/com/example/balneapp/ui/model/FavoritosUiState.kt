@@ -8,7 +8,6 @@ data class BalnearioFavoritoUi(
     val cantidadResenas: Int,
     val precioDesde: Int,
     val imagenResId: Int,
-    val rutaDetalle: String? = null
 )
 
 enum class OrdenFavoritos {

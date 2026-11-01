@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
-import com.example.balneapp.navigation.navigateToBalneAppTab
 import com.example.balneapp.ui.components.BotonFavoritoBalneario
 import com.example.balneapp.ui.model.BalnearioIds
 import com.example.balneapp.ui.viewmodel.ExplorarViewModel
@@ -91,157 +90,11 @@ fun PantallaExplorar(navController: NavController) {
             else -> mostrarExplicacionUbicacion = true
         }
     }
-    val selectedTab = 2
-
-    val grisBarra = Color(0xFFFAFAFA)
-    val seleccionBgColor = Color(0xFFCFF5FC)
     val azulOscuro = Color(0xFF0D075E)
     val celesteBoton = Color(0xFF00B5D8)
     val celesteAgua = Color(0xFF00A3C4)
 
-    Scaffold(
-        bottomBar = {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(5.dp),
-                color = grisBarra,
-                shadowElevation = 2.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp, horizontal = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 0) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable {
-                                navController.navigateToBalneAppTab("principal")
-                            }
-                            .padding(horizontal = 14.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_balneapp_home),
-                                contentDescription = "Inicio",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Inicio",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 1) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigateToBalneAppTab("favoritos") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_balneapp_favorite),
-                                contentDescription = "Favoritos",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Favoritos",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 2) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_balneapp_explore_logo),
-                                contentDescription = "Explorar",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Explorar",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = celesteAgua
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 3) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable { navController.navigateToBalneAppTab("reservas") }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_balneapp_reservation),
-                                contentDescription = "Reservas",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Reservas",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .background(
-                                color = if (selectedTab == 4) seleccionBgColor else Color.Transparent,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clickable {
-                                navController.navigate("perfil")
-                            }
-                            .padding(horizontal = 10.dp, vertical = 6.dp)
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_balneapp_profile),
-                                contentDescription = "Perfil",
-                                modifier = Modifier.size(26.dp)
-                            )
-                            Text(
-                                text = "Perfil",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
 
         Box(
             modifier = Modifier.fillMaxSize()

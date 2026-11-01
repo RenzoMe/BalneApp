@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.balneapp.navigation.AppRoute
 import com.example.balneapp.R
 import com.example.balneapp.ui.components.CalendarioDisponibilidad
 import com.example.balneapp.ui.model.OpcionEquipamientoReserva
@@ -150,7 +151,7 @@ fun PantallaDisponibilidad(
                 Button(
                     onClick = {
                         if (viewModel.continuar(balnearioId)) {
-                            navController.navigate("resumenReserva")
+                            navController.navigate(AppRoute.ResumenReserva.route)
                         }
                     },
                     modifier = Modifier

@@ -38,7 +38,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.balneapp.navigation.navigateToBalneAppTab
+import com.example.balneapp.navigation.AppRoute
+import com.example.balneapp.navigation.navigateToTopLevel
 import com.example.balneapp.ui.viewmodel.ResumenReservaViewModel
 import com.example.balneapp.ui.viewmodel.balneAppViewModel
 import java.text.NumberFormat
@@ -61,7 +62,7 @@ fun PantallaResumenReserva(
 
     LaunchedEffect(uiState.confirmada) {
         if (uiState.confirmada) {
-            navController.navigateToBalneAppTab("reservas")
+            navController.navigateToTopLevel(AppRoute.Reservas)
             viewModel.limpiarConfirmacion()
         }
     }
@@ -86,7 +87,7 @@ fun PantallaResumenReserva(
                 ) {
                     Text("No hay una reserva para resumir.", color = Color(0xFF555555), fontSize = 16.sp)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { navController.navigateToBalneAppTab("principal") }) {
+                    Button(onClick = { navController.navigateToTopLevel(AppRoute.Inicio) }) {
                         Text("Volver al inicio")
                     }
                 }

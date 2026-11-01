@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
-import com.example.balneapp.navigation.navigateToBalneAppTab
 
 @Composable
 fun PantallaResenas(navController: NavController) {
@@ -37,71 +36,7 @@ fun PantallaResenas(navController: NavController) {
     val textoGris = Color(0xFF757575)
     val moradoInteraccion = Color(0xFF3F3D56)
 
-    Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0), // Evita que Scaffold meta margen blanco arriba
-
-        bottomBar = {
-            Surface(
-                color = Color.White,
-                shadowElevation = 8.dp
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable {
-                            navController.navigateToBalneAppTab("principal")
-                        }
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_balneapp_home), contentDescription = "Inicio", modifier = Modifier.size(22.dp))
-                        Text("Inicio", fontSize = 11.sp, color = textoGris)
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { navController.navigateToBalneAppTab("favoritos") }
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_balneapp_favorite), contentDescription = "Favoritos", modifier = Modifier.size(22.dp))
-                        Text("Favoritos", fontSize = 11.sp, color = textoGris)
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { navController.navigate("explorar") }
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_balneapp_explore_logo),
-                            contentDescription = "Explorar",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text("Explorar", fontSize = 11.sp, color = textoGris)
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { navController.navigateToBalneAppTab("reservas") }
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_balneapp_reservation), contentDescription = "Reservas", modifier = Modifier.size(22.dp))
-                        Text("Reservas", fontSize = 11.sp, color = textoGris)
-                    }
-
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.clickable { navController.navigate("perfil") }
-                    ) {
-                        Image(painter = painterResource(R.drawable.ic_balneapp_profile), contentDescription = "Perfil", modifier = Modifier.size(22.dp))
-                        Text("Perfil", fontSize = 11.sp, color = textoGris)
-                    }
-                }
-            }
-        }
-    ) { paddingValues ->
+    Scaffold(contentWindowInsets = WindowInsets(0, 0, 0, 0)) { paddingValues ->
 
         Column(
             modifier = Modifier

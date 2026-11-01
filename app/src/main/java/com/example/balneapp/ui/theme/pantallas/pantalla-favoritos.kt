@@ -50,9 +50,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.balneapp.R
-import com.example.balneapp.navigation.navigateToBalneAppTab
-import com.example.balneapp.ui.components.BalneAppBottomBar
+import com.example.balneapp.navigation.AppRoute
+import com.example.balneapp.navigation.navigateToTopLevel
 import com.example.balneapp.ui.model.BalnearioFavoritoUi
+import com.example.balneapp.ui.model.BalnearioIds
 import com.example.balneapp.ui.model.OrdenFavoritos
 import com.example.balneapp.ui.viewmodel.FavoritosViewModel
 import com.example.balneapp.ui.viewmodel.balneAppViewModel
@@ -72,15 +73,7 @@ fun PantallaFavoritos(
     val uiState by viewModel.uiState.collectAsState()
     var filtroAbierto by remember { mutableStateOf(false) }
 
-    Scaffold(
-        containerColor = fondoFavoritos,
-        bottomBar = {
-            BalneAppBottomBar(
-                selectedRoute = "favoritos",
-                onDestinationSelected = navController::navigateToBalneAppTab
-            )
-        }
-    ) { innerPadding ->
+    Scaffold(containerColor = fondoFavoritos) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -145,7 +138,7 @@ fun PantallaFavoritos(
                 ) {
                     CircularAction(
                         contentDescription = "Volver al inicio",
-                        onClick = { navController.navigateToBalneAppTab("principal") }
+                        onClick = { navController.navigateToTopLevel(AppRoute.Inicio) }
                     ) {
                         Image(
                             painter = painterResource(R.drawable.ic_balneapp_back),
@@ -225,7 +218,7 @@ fun PantallaFavoritos(
                                         favorito = favorito,
                                         modifier = Modifier.weight(1f),
                                         onQuitar = { viewModel.quitarFavorito(favorito.id) },
-                                        onAbrir = { route -> navController.navigate(route) }
+                                        onAbrir = { route -> navController.navigate(route.route) }
                                     )
                                 }
                                 if (fila.size == 1) Spacer(modifier = Modifier.weight(1f))
@@ -274,9 +267,14 @@ private fun TarjetaFavorito(
     favorito: BalnearioFavoritoUi,
     modifier: Modifier = Modifier,
     onQuitar: () -> Unit,
-    onAbrir: (String) -> Unit
+    onAbrir: (AppRoute) -> Unit
 ) {
-    val openModifier = favorito.rutaDetalle?.let { route ->
+    val routeDetalle = when (favorito.id) {
+        BalnearioIds.GOLONDRINAS -> AppRoute.Golondrinas
+        BalnearioIds.OASIS -> AppRoute.Oasis
+        else -> null
+    }
+    val openModifier = routeDetalle?.let { route ->
         Modifier.clickable { onAbrir(route) }
     } ?: Modifier
 

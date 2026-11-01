@@ -30,8 +30,7 @@ class FavoritosViewModel(private val repository: FavoritosRepository) : ViewMode
             puntuacion = 4.4,
             cantidadResenas = 134,
             precioDesde = 30_000,
-            imagenResId = R.drawable.imagengolondrina,
-            rutaDetalle = "golondrinas"
+            imagenResId = R.drawable.imagengolondrina
         ),
         BalnearioFavoritoUi(
             id = BalnearioIds.OASIS,
@@ -40,8 +39,7 @@ class FavoritosViewModel(private val repository: FavoritosRepository) : ViewMode
             puntuacion = 3.8,
             cantidadResenas = 103,
             precioDesde = 30_000,
-            imagenResId = R.drawable.imagenpaco,
-            rutaDetalle = "oasis"
+            imagenResId = R.drawable.imagenpaco
         ),
         BalnearioFavoritoUi(
             id = BalnearioIds.HORIZONTE,

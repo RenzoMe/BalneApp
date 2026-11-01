@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.balneapp.R
-import com.example.balneapp.navigation.navigateToBalneAppTab
-import com.example.balneapp.ui.components.BalneAppBottomBar
+import com.example.balneapp.navigation.AppRoute
+import com.example.balneapp.navigation.navigateToTopLevel
 import com.example.balneapp.ui.model.ReservaConfirmada
 import com.example.balneapp.ui.viewmodel.ReservasViewModel
 import com.example.balneapp.ui.viewmodel.balneAppViewModel
@@ -59,15 +59,7 @@ fun PantallaReservas(
 ) {
     val reservas by viewModel.reservas.collectAsState()
 
-    Scaffold(
-        containerColor = fondoListaReservas,
-        bottomBar = {
-            BalneAppBottomBar(
-                selectedRoute = "reservas",
-                onDestinationSelected = navController::navigateToBalneAppTab
-            )
-        }
-    ) { innerPadding ->
+    Scaffold(containerColor = fondoListaReservas) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -102,7 +94,7 @@ fun PantallaReservas(
 
             if (reservas.isEmpty()) {
                 EstadoReservasVacio(
-                    onExplorar = { navController.navigateToBalneAppTab("principal") }
+                    onExplorar = { navController.navigateToTopLevel(AppRoute.Inicio) }
                 )
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {

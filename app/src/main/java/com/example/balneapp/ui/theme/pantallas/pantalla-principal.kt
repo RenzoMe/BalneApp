@@ -26,8 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
-import com.example.balneapp.navigation.navigateToBalneAppTab
-import com.example.balneapp.ui.components.BalneAppBottomBar
+import com.example.balneapp.navigation.AppRoute
 import com.example.balneapp.ui.components.BotonFavoritoBalneario
 import com.example.balneapp.ui.model.BalnearioIds
 import com.example.balneapp.ui.viewmodel.PerfilViewModel
@@ -43,14 +42,7 @@ fun PantallaPrincipal(navController: NavController) {
     val celesteAgua = Color(0xFF00A3C4)
     val cardBgColor = Color(0xFFF0FDFF)
 
-    Scaffold(
-        bottomBar = {
-            BalneAppBottomBar(
-                selectedRoute = "principal",
-                onDestinationSelected = navController::navigateToBalneAppTab
-            )
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,7 +77,10 @@ fun PantallaPrincipal(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "¡Hola, ${preferencias.nombre.substringBefore(' ')}!",
+                    text = preferencias.nombre.substringBefore(' ')
+                        .takeIf { it.isNotBlank() }
+                        ?.let { "¡Hola, $it!" }
+                        ?: "¡Hola!",
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
@@ -145,7 +140,7 @@ fun PantallaPrincipal(navController: NavController) {
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { navController.navigate("golondrinas") },
+                            .clickable { navController.navigate(AppRoute.Golondrinas.route) },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = cardBgColor)
                     ) {
@@ -235,7 +230,7 @@ fun PantallaPrincipal(navController: NavController) {
                     Card(
                         modifier = Modifier
                             .weight(1f)
-                            .clickable { navController.navigate("oasis") },
+                            .clickable { navController.navigate(AppRoute.Oasis.route) },
                         shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = cardBgColor)
                     ) {

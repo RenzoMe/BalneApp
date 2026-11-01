@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.balneapp.navigation.AppRoute
 import androidx.navigation.compose.rememberNavController
 import com.example.balneapp.R
 import com.example.balneapp.ui.components.BotonFavoritoBalneario
@@ -198,7 +199,7 @@ fun PantallaGolondrinas(navController: NavController) {
                             
                             Row(
                                 modifier = Modifier.clickable {
-                                    navController.navigate("resenas")
+                                    navController.navigate(AppRoute.Resenas.route)
                                 },
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -291,7 +292,7 @@ fun PantallaGolondrinas(navController: NavController) {
                         }
 
                         Button(
-                            onClick = { navController.navigate("disponibilidad/${BalnearioIds.GOLONDRINAS}") },
+                            onClick = { navController.navigate(AppRoute.Disponibilidad.conId(BalnearioIds.GOLONDRINAS)) },
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = celesteBoton),
                             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)

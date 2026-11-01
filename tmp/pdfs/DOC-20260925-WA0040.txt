@@ -1,0 +1,1495 @@
+--- PAGE 1 ---
+Arquitectura MVVM y Retrofit en Android
+Apunte teorico - Tecnicatura Universitaria en Programacion
+
+--- PAGE 2 ---
+Contents
+Arquitectura MVVM y Retrofit en Android 2
+Cómo usar este material . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+CAPÍTULO 1 — Introducción a la arquitectura de software . . . . . . . . . . . . . . . . . 2
+CAPÍTULO 2 — El problema de mezclar responsabilidades . . . . . . . . . . . . . . . . . 5
+CAPÍTULO 3 — Arquitectura MVVM . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+CAPÍTULO 4 — Flujo de datos y responsabilidades . . . . . . . . . . . . . . . . . . . . . 10
+CAPÍTULO 5 — Repository . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+CAPÍTULO 6 — Introducción a las API y HTTP . . . . . . . . . . . . . . . . . . . . . . 12
+CAPÍTULO 7 — JSON y conversión de datos . . . . . . . . . . . . . . . . . . . . . . . . . 14
+CAPÍTULO 8 — Introducción a Retrofit . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+CAPÍTULO 9 — Configuración básica de Retrofit . . . . . . . . . . . . . . . . . . . . . . 17
+CAPÍTULO 10 — Definición de una API con Retrofit . . . . . . . . . . . . . . . . . . . . 18
+CAPÍTULO 11 — Coroutines y funciones suspend . . . . . . . . . . . . . . . . . . . . . . 21
+CAPÍTULO 12 — Integración MVVM + Retrofit . . . . . . . . . . . . . . . . . . . . . . . 22
+CAPÍTULO 13 — Estado de la UI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+CAPÍTULO 14 — Manejo de errores . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+CAPÍTULO 15 — Ejemplo completo paso a paso . . . . . . . . . . . . . . . . . . . . . . . 29
+CAPÍTULO 16 — Errores comunes y malas prácticas . . . . . . . . . . . . . . . . . . . . 31
+CAPÍTULO 17 — MVVM, Retrofit y ciclo de vida . . . . . . . . . . . . . . . . . . . . . . 32
+CAPÍTULO 18 — Síntesis conceptual . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+1
+
+--- PAGE 3 ---
+Arquitectura MVVM y Retrofit en
+Android
+Apunte teórico para la tecnicatura en programación — Desarrollo de Aplicativos
+Móviles
+Cómo usar este material
+Este apunte está pensado para leerse en orden. Cada capítulo se apoya en el anterior: los conceptos
+de arquitectura del Capítulo 1 son necesarios para entender por qué existe MVVM (Capítulo 3);
+los conceptos de HTTP y JSON (Capítulos 6 y 7) son necesarios para entender qué hace Retrofit
+(Capítulo 8); y todo eso confluye en el ejemplo integrador de los Capítulos 12 y 15. No conviene
+saltar capítulos la primera vez que se lee.
+A lo largo del texto vas a encontrar tres tipos de bloques:
+Nota: aclaraciones conceptuales importantes.
+Atención: errores frecuentes o afirmaciones que suelen malinterpretarse.
+Diagrama en texto: así se van a representar los flujos de datos.
+CAPÍTULO 1 — Introducción a la arquitectura de software
+1.1 ¿Qué es la arquitectura de software?
+Cuando programamos una aplicación, no alcanza con que el programa “funcione” . Funcionar es el
+requisito mínimo. Lo que distingue a una aplicación profesional de un experimento es cómo está
+organizado internamente el código que hace que funcione .
+La arquitectura de software es el conjunto de decisiones sobre cómo se dividen las respons-
+abilidades dentro de una aplicación: qué parte del código hace qué cosa, cómo se comunican esas
+partes entre sí, y qué reglas rigen esa comunicación. No es un detalle estético ni una cuestión de
+“prolijidad”: es lo que determina si una aplicación se puede mantener, ampliar y corregir con el
+paso del tiempo.
+2
+
+--- PAGE 4 ---
+Pensalo con una analogía. Una casa puede construirse sin planos, ubicando cada pared donde
+parezca cómodo en el momento. Es posible que el resultado sea habitable. Pero si más adelante hay
+que agregar una habitación, cambiar la instalación eléctrica o reparar una filtración, la ausencia de
+un plano organizado va a hacer que cada intervención sea más costosa, más riesgosa y más lenta.
+La arquitectura de software cumple el mismo rol que el plano: no cambia si la casa se puede habitar
+hoy, pero determina cuánto va a costar modificarla mañana.
+1.2 ¿Qué significa “organizar” una aplicación?
+Organizar una aplicación significa decidir, de manera consciente, cosas como:
+• Qué parte del código se encarga de mostrar información en pantalla .
+• Qué parte del código se encarga de obtener o calcular esa información .
+• Qué parte del código se encarga de decidir qué hacer cuando el usuario interactúa.
+• Cómo esas partes se comunican sin depender excesivamente unas de otras.
+Cuando estas decisiones no se toman de manera explícita, la aplicación termina organizándose de
+todos modos — pero de manera accidental, guiada por la urgencia de que “ande”, y no por un
+criterio sostenible.
+1.3 El problema de una aplicación sin arquitectura
+Una aplicación sin arquitectura definida suele presentar estos síntomas con el tiempo:
+• Una misma clase (típicamente una Activity o una pantalla) termina conociendo y haciendo
+demasiadas cosas.
+• Modificar una funcionalidad exige entender y tocar código que, en principio, no debería estar
+relacionado.
+• Es difícil escribir pruebas automatizadas, porque la lógica de negocio está entrelazada con la
+lógica de la interfaz.
+• Distintos desarrolladores del mismo equipo terminan resolviendo problemas parecidos de man-
+eras diferentes, porque no hay un patrón compartido.
+• Los errores se vuelven difíciles de rastrear, porque no hay un lugar claro donde buscar la
+causa.
+Ninguno de estos problemas impide que la app funcione hoy. Todos ellos aparecen cuando la app
+necesita cambiar — y toda aplicación real cambia todo el tiempo.
+1.4 Cuatro cualidades que persigue una buena arquitectura
+Cualidad Qué significa Qué permite
+Mantenibilidad El código puede corregirse o
+modificarse sin generar efectos
+colaterales imprevistos
+Reducir el costo de mantener
+la app en el tiempo
+Escalabilidad La aplicación puede crecer en
+funcionalidades sin degradarse
+su organización
+Agregar pantallas, módulos o
+funciones sin “romper” lo
+existente
+Reutilización Partes del código pueden
+usarse en más de un lugar sin
+duplicarlas
+Ahorrar trabajo y reducir
+inconsistencias
+3
+
+--- PAGE 5 ---
+Cualidad Qué significa Qué permite
+T estabilidad La lógica puede probarse de
+forma automatizada, aislada
+de la interfaz
+Detectar errores antes de que
+lleguen al usuario
+Nota: estas cuatro cualidades no son “extra” . Son la razón de ser de la arquitectura.
+Un patrón arquitectónico como MVVM, que vamos a estudiar en el Capítulo 3, es
+simplemente una manera concreta de conseguirlas.
+1.5 Ejemplo: todo en una sola Activity
+Imaginemos una pantalla simple que debe mostrar una lista de usuarios obtenidos de Internet. Una
+versión “sin arquitectura” podría concentrar todo así:
+class MainActivity : ComponentActivity() {
+private lateinit var listaUsuarios: MutableList<Usuario>
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
+// 1. Se conecta directamente a Internet
+// 2. Se procesan los datos recibidos
+// 3. Se actualiza la interfaz
+// 4. Se decide qué mostrar si hay error
+// ...todo en el mismo lugar
+}
+}
+En este esquema, MainActivity sabe cómo pedir datos a un servidor , cómo interpretarlos ,
+cómo decidir si hubo un error y cómo dibujar la pantalla . Cuatro responsabilidades distintas
+conviven en una sola clase.
+1.6 La misma aplicación, organizada
+Más adelante, en los Capítulos 3 a 5, vamos a ver en detalle cómo separar esas responsabilidades.
+Adelantemos la idea central con un diagrama:
+Sin arquitectura:
+MainActivity → hace todo (UI + red + lógica + estado)
+Con arquitectura (adelanto de MVVM):
+Pantalla (UI) → ViewModel (lógica y estado) → Repository (datos) → API
+Cada flecha representa una comunicación acotada: la pantalla no sabe cómo se obtienen los datos,
+el ViewModel no sabe cómo se dibuja la interfaz, y el Repository no sabe qué se va a hacer con los
+datos una vez entregados. Esa separación es, precisamente, el objetivo del resto de este apunte.
+Atención: separar responsabilidades no significa “crear muchas clases porque sí” . Cada
+capa que agregamos debe justificarse por un problema real que resuelve. Vamos a insistir
+en esto en el Capítulo 16.
+4
+
+--- PAGE 6 ---
+CAPÍTULO 2 — El problema de mezclar responsabilidades
+2.1 Un ejemplo más completo del problema
+Retomemos la idea del Capítulo 1, pero con más detalle. Supongamos una Activity responsable de:
+• Mostrar una lista de usuarios.
+• Conectarse a Internet para obtenerla.
+• Convertir la respuesta del servidor a objetos Kotlin.
+• Decidir si mostrar un mensaje de error.
+• Guardar el estado de la pantalla.
+• Decidir qué pantalla abrir si el usuario toca un elemento.
+class UsuariosActivity : ComponentActivity() {
+private var estaCargando = false
+private var listaUsuarios: List<Usuario> = emptyList()
+private var mensajeError: String? = null
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
+estaCargando = true
+// Llamada de red "a mano", procesamiento y actualización de estado,
+// todo dentro del mismo bloque de código de la Activity.
+obtenerUsuariosDesdeInternet { resultado, error ->
+estaCargando = false
+if (error != null) {
+mensajeError = "No se pudieron obtener los usuarios"
+} else {
+listaUsuarios = resultado ?: emptyList()
+}
+actualizarInterfaz()
+}
+}
+private fun actualizarInterfaz() {
+// Lógica de dibujo de la pantalla según el estado
+}
+}
+2.2 ¿Qué responsabilidad está mezclada, y por qué importa?
+No alcanza con decir “esto está mal organizado” . Hay que identificar qué responsabilidades
+concretas conviven en esa clase:
+1. Responsabilidad de acceso a datos : UsuariosActivity sabe cómo se pide información a
+Internet.
+5
+
+--- PAGE 7 ---
+2. Responsabilidad de procesamiento : decide qué hacer con el resultado (separar éxito de
+error).
+3. Responsabilidad de estado : guarda variables que representan si está cargando, si hubo
+error, qué datos hay.
+4. Responsabilidad de interfaz : decide cómo se dibuja la pantalla según esas variables.
+El problema no es que estas cuatro cosas sucedan. Todas son necesarias. El problema es que
+suceden en el mismo lugar, sin límites claros entre ellas .
+2.3 Consecuencias concretas de esta mezcla
+• Dificultad para probar la lógica : para comprobar que estaCargando se actualiza correcta-
+mente, habría que instanciar toda la Activity, lo cual requiere un entorno Android completo.
+No se puede probar la lógica de manera aislada.
+• Dificultad para reutilizar : si otra pantalla necesita la misma lista de usuarios, no hay
+manera de reutilizar el código de obtención de datos sin copiarlo.
+• Dificultad para dar mantenimiento : si cambia la forma en que se obtienen los usuarios
+(por ejemplo, se agrega paginación), hay que modificar una clase que también contiene lógica
+de interfaz, con el riesgo de romper algo que no estaba relacionado con el cambio.
+• Acoplamiento al ciclo de vida de Android : la lógica de red queda atada a onCreate, lo
+que genera comportamientos difíciles de controlar ante rotaciones de pantalla o recreación de
+la Activity.
+2.4 Hacia la necesidad de una arquitectura
+Lo que se necesita no es “más código”, sino límites claros : que la responsabilidad de mostrar la
+interfaz esté separada de la responsabilidad de obtener datos, y que ambas estén separadas de la
+responsabilidad de decidir qué mostrar según el resultado obtenido.
+Ese es exactamente el problema que resuelve el patrón que vamos a estudiar a continuación:
+MVVM.
+CAPÍTULO 3 — Arquitectura MVVM
+MVVM significa Model – View – ViewModel . Es un patrón arquitectónico que propone dividir
+una pantalla en tres componentes con responsabilidades diferenciadas.
+observa estado solicita datos
+View ───────────────► ViewModel ───────────────► Model
+◄─────────────── ◄───────────────
+envía eventos entrega datos
+Antes de entrar en cada componente, una idea general: en MVVM, la comunicación va en una
+sola dirección por vez y de forma acotada . La View no le pide datos directamente al Model.
+El ViewModel es el intermediario que conoce a ambos lados sin que ellos se conozcan entre sí.
+6
+
+--- PAGE 8 ---
+3.1 View
+Definición. La View es la capa responsable de mostrar información al usuario y de capturar sus
+interacciones. En una aplicación Android moderna, la View está construida con Jetpack Compose,
+usando funciones @Composable.
+Responsabilidad. Dibujar la interfaz en función de un estado, y notificar al ViewModel cuando
+ocurre un evento (un clic, un texto ingresado, un gesto).
+Qué conoce. Conoce el estado que el ViewModel expone (por ejemplo, una lista de usuarios, un
+indicador de carga). Conoce cómo traducir ese estado en elementos visuales.
+Qué NO debería conocer. No debería conocer de dónde viene ese estado. No debería saber si
+los datos llegaron de Internet, de una base de datos local o de una simulación. No debería contener
+reglas de negocio (por ejemplo, “si el usuario es menor de edad, no mostrar tal botón” es una
+decisión que no le corresponde decidir a la View, aunque sí ejecutar visualmente).
+Composables, recomposición y observación del estado. Un Composable es una función que
+describe una porción de interfaz en términos de los datos que recibe. Cuando esos datos cambian,
+Compose vuelve a ejecutar la función para reflejar el nuevo estado: a este proceso se lo llama
+recomposición. La View no actualiza manualmente la pantalla: se limita a observar un estado
+(típicamente expuesto como StateFlow o State desde el ViewModel) y Compose se encarga de
+redibujar automáticamente cuando ese estado cambia.
+@Composable
+fun UsuariosScreen(viewModel: UsuarioViewModel) {
+val estado by viewModel.uiState.collectAsState()
+when {
+estado.estaCargando -> TextoCargando()
+estado.error != null -> TextoError(estado.error)
+else -> ListaDeUsuarios(estado.usuarios)
+}
+}
+Notemos lo que no aparece en este Composable: no hay ninguna llamada a Internet, ninguna con-
+versión de datos, ninguna decisión de negocio. Solo hay una lectura de estado ( collectAsState())
+y una decisión puramente visual sobre qué dibujar según ese estado.
+Nota: que la View “observe” el estado, en lugar de que alguien le “avise” manualmente,
+es central en Compose. La View no pregunta “¿cambió algo?”; simplemente se declara
+en función del estado actual, y el framework se ocupa de mantenerla sincronizada.
+3.2 ViewModel
+Definición. El ViewModel es el componente que contiene la lógica de presentación de una pantalla:
+administra su estado, recibe los eventos que genera la View y coordina la obtención de datos.
+Qué problema resuelve. Resuelve exactamente el problema descrito en el Capítulo 2: saca de
+la View (y de la Activity) toda la lógica que no es puramente visual, y le da un lugar propio,
+independiente del ciclo de vida de la interfaz.
+Por qué permite separar la lógica de la interfaz. Porque el ViewModel no tiene ninguna
+7
+
+--- PAGE 9 ---
+dependencia hacia Compose ni hacia Android UI. Puede probarse de forma aislada, sin necesidad de
+dibujar nada en pantalla, y puede sobrevivir a eventos como la rotación de pantalla, que en Android
+recrean la Activity pero no destruyen el ViewModel asociado (gracias a ViewModelStoreOwner).
+Administrar el estado de una pantalla significa mantener, en un único lugar, la “fotografía”
+de todo lo que la pantalla necesita mostrar en un momento dado: si está cargando, qué datos tiene,
+si hubo un error. En el Capítulo 13 vamos a modelar esto formalmente con una clase de estado.
+Cómo recibe eventos de la UI. La View invoca funciones públicas del ViewModel (por ejemplo,
+viewModel.cargarUsuarios()), en respuesta a una acción del usuario.
+Cómo solicita datos y actualiza el estado. El ViewModel no accede directamente a Internet
+ni a una base de datos: le pide los datos al Repository (Capítulo 5), y cuando los recibe, actualiza
+su estado interno. Ese cambio de estado es lo que la View termina observando y usando para
+recomponerse.
+class UsuarioViewModel(
+private val repository: UsuarioRepository
+) : ViewModel() {
+private val _uiState = MutableStateFlow(UsuarioUiState())
+val uiState: StateFlow<UsuarioUiState> = _uiState.asStateFlow()
+fun cargarUsuarios() {
+viewModelScope.launch {
+_uiState.update { it.copy(estaCargando = true, error = null) }
+try {
+val usuarios = repository.obtenerUsuarios()
+_uiState.update { it.copy(estaCargando = false, usuarios = usuarios) }
+} catch (e: Exception) {
+_uiState.update { it.copy(estaCargando = false, error = "No se pudieron cargar los usuarios" ) }
+}
+}
+}
+}
+Analicemos qué hace y qué no hace este código:
+• Hace: administra el estado ( _uiState), decide cuándo marcar “cargando”, le pide datos al
+Repository, interpreta el resultado (éxito o excepción) y actualiza el estado en consecuencia.
+• No hace: no sabe si esos datos vienen de una API REST, de una base de datos o de un
+archivo. No sabe cómo se dibuja un TextoCargando(). No contiene ninguna referencia a
+Compose.
+Relación con el ciclo de vida. El ViewModel está diseñado para sobrevivir a cambios de
+configuración (como rotar la pantalla), pero se destruye cuando la pantalla a la que está asociado se
+cierra definitivamente. viewModelScope es un alcance de corrutinas ligado exactamente a ese ciclo de
+vida: si el ViewModel se destruye, las corrutinas lanzadas en ese scope se cancelan automáticamente.
+Atención: un error frecuente es pensar que el ViewModel debe conocer detalles de la
+interfaz (por ejemplo, recibir un Context de Activity o referencias a Composables). El
+8
+
+--- PAGE 10 ---
+ViewModel no debería depender de clases de Android UI; su independencia respecto de
+la interfaz es justamente lo que lo hace testeable.
+3.3 Model
+El término “Model” es, de los tres componentes de MVVM, el que genera más confusión, porque
+no se refiere a una sola cosa.
+Datos de la aplicación en sentido amplio. “Model” hace referencia a toda la capa que repre-
+senta y provee los datos con los que trabaja la aplicación: no es una única clase, sino un conjunto
+de elementos que incluye modelos de datos, repositorios y fuentes de datos.
+Modelo de dominio vs. DTO. Dentro de esa capa conviene distinguir:
+• DTO (Data T ransfer Object): una clase que representa exactamente la forma en que los
+datos llegan desde una fuente externa (por ejemplo, el JSON de una API). Su forma está
+condicionada por ese origen externo, no por las necesidades internas de la app.
+• Modelo de dominio: una clase que representa los datos tal como la aplicación los necesita
+internamente, independientemente de cómo se hayan obtenido.
+// DTO: refleja la forma del JSON recibido desde la API
+data class UsuarioDto(
+val id: Int,
+val nombre: String,
+val email: String,
+val activo_flag: Int // el backend usa un entero, no un booleano
+)
+// Modelo de dominio: forma que la aplicación realmente necesita
+data class Usuario(
+val id: Int,
+val nombre: String,
+val email: String,
+val activo: Boolean
+)
+La conversión entre uno y otro ( activo_flag == 1 → activo = true ) suele hacerse en el Repository,
+que es quien conoce ambos formatos.
+Nota: en proyectos pequeños o de aprendizaje, es común usar una sola clase para
+ambos propósitos, y no hay nada incorrecto en eso mientras se entienda la simplificación
+que se está haciendo. Pero no conviene asumir que “Model” significa automáticamente
+“una data class llamada Usuario”: en un proyecto más grande, esa suposición genera
+acoplamientos entre el formato del backend y la lógica interna de la app.
+9
+
+--- PAGE 11 ---
+CAPÍTULO 4 — Flujo de datos y responsabilidades
+4.1 El recorrido completo de una acción
+Tomemos el ejemplo de una pantalla que muestra una lista de usuarios, con un botón para recargarla.
+Cuando el usuario presiona ese botón, ocurre la siguiente secuencia:
+1. El usuario presiona el botón "Recargar".
+2. La View invoca una función del ViewModel: viewModel.cargarUsuarios()
+3. El ViewModel actualiza su estado interno a "cargando = true"
+4. El ViewModel le pide los datos al Repository: repository.obtenerUsuarios()
+5. El Repository solicita los datos a la API mediante Retrofit
+6. La API responde (con éxito o con error)
+7. El Repository entrega el resultado al ViewModel
+8. El ViewModel actualiza su estado ("cargando = false", con datos o con error)
+9. Compose observa el cambio de estado
+10. La interfaz se recompone y muestra el resultado
+UI (Compose) ViewModel Repository API (Retrofit)
+│ evento │ │ │
+├────────────────────► │ │ │
+│ │ solicita datos │ │
+│ ├──────────────────► │ │
+│ │ │ request HTTP │
+│ │ ├───────────────────► │
+│ │ │ response (JSON) │
+│ │ │ ◄───────────────────┤
+│ │ entrega resultado │ │
+│ │ ◄──────────────────┤ │
+│ actualiza estado │ │ │
+│ ◄────────────────────┤ │ │
+│ recompone │ │ │
+4.2 Tres flujos que conviene distinguir
+Es habitual confundir tres nociones relacionadas pero distintas:
+Flujo Qué es Dirección típica Ejemplo
+Flujo de eventos Acciones que el
+usuario genera en la
+interfaz
+View → ViewModel El usuario toca
+“Recargar”
+Flujo de datos Información que se
+obtiene y se
+transforma a medida
+que atraviesa las capas
+Fuente de datos →
+Repository →
+ViewModel
+La respuesta JSON se
+convierte en objetos
+Usuario
+Estado de la
+interfaz
+La “fotografía”
+completa de lo que la
+pantalla debe mostrar
+en un momento dado
+Se expone desde el
+ViewModel y se
+observa desde la View
+UsuarioUiState(estaCargando
+= false, usuarios =
+[...])
+10
+
+--- PAGE 12 ---
+Atención: el estado de la interfaz no es lo mismo que el flujo de datos. El flujo de
+datos describe el recorrido de la información; el estado es el resultado de ese recorrido
+en un instante determinado, listo para ser observado por la View.
+Este capítulo es, sobre todo, un mapa: a medida que se avance en Repository (Capítulo 5), Retrofit
+(Capítulos 8 a 10) y estado de UI (Capítulo 13), conviene volver a este diagrama para ubicar cada
+pieza nueva dentro del recorrido completo.
+CAPÍTULO 5 — Repository
+5.1 ¿Qué es el patrón Repository?
+El Repository es un componente que centraliza el acceso a los datos y le oculta al resto de
+la aplicación de dónde provienen esos datos. El ViewModel le pide información al Repository sin
+necesidad de saber si esa información viene de una API remota, de una base de datos local, de una
+caché en memoria, o de una combinación de varias fuentes.
+5.2 Responsabilidades del Repository
+• Decidir de qué fuente obtener los datos solicitados.
+• Convertir los datos recibidos (por ejemplo, un DTO) al modelo que el resto de la aplicación
+espera.
+• Ocultar los detalles de implementación del acceso a datos (Retrofit, bases de datos, etc.) detrás
+de una interfaz simple.
+• Eventualmente, coordinar múltiples fuentes (por ejemplo, devolver datos guardados en caché
+mientras se actualizan desde la red).
+5.3 Relación con ViewModel y con Retrofit
+ViewModel ──── conoce ────► Repository ──── conoce ────► API (Retrofit)
+ViewModel ──── NO conoce ──────────────────────────────► API (Retrofit)
+El ViewModel conoce al Repository, pero no conoce a Retrofit. Esta indirección tiene un beneficio
+concreto: si mañana se reemplaza Retrofit por otra biblioteca, o se agrega una base de datos local,
+el ViewModel no necesita modificarse, porque su única dependencia es la interfaz del Repository.
+5.4 Diferencia entre Repository y API
+Repository API (interfaz Retrofit)
+Qué es Una clase que decide de dónde
+obtener datos y los entrega ya
+convertidos
+Una interfaz que describe los
+endpoints HTTP disponibles
+A quién le habla Al ViewModel (hacia arriba) y
+a la API/base de datos (hacia
+abajo)
+Solo describe solicitudes
+HTTP; no toma decisiones
+Conoce el formato de red Sí, y lo traduce a un modelo
+interno
+Sí, es su única función
+11
+
+--- PAGE 13 ---
+5.5 Diferencia entre Repository y ViewModel
+El Repository no administra estado de interfaz ni sabe qué pantalla lo está usando. Se limita a
+responder “dame estos datos” con la información solicitada (o con un error). El ViewModel, en
+cambio, sí administra estado y sí sabe para qué pantalla está trabajando.
+5.6 Ejemplo
+interface UsuarioRepository {
+suspend fun obtenerUsuarios(): List<Usuario>
+}
+class UsuarioRepositoryImpl(
+private val api: UsuarioApi
+) : UsuarioRepository {
+override suspend fun obtenerUsuarios(): List<Usuario> {
+val dtos = api.obtenerUsuarios() // datos "crudos" desde la API
+return dtos.map { dto ->
+Usuario( // conversión a modelo de dominio
+id = dto.id,
+nombre = dto.nombre,
+email = dto.email,
+activo = dto.activo_flag == 1
+)
+}
+}
+}
+Que UsuarioRepository sea una interfaz, implementada por UsuarioRepositoryImpl, no es un
+capricho: permite, por ejemplo, crear una implementación falsa ( FakeUsuarioRepository) para
+probar el ViewModel sin necesidad de una conexión real a Internet.
+Nota: Repository no es una capa obligatoria en todo proyecto MVVM. En un proyecto
+muy pequeño o educativo, el ViewModel podría hablar directamente con la interfaz de
+Retrofit. Sin embargo, a medida que el proyecto crece —o cuando hay más de una
+fuente de datos—, el Repository se vuelve una herramienta muy útil para mantener esa
+complejidad ordenada y fuera del ViewModel.
+CAPÍTULO 6 — Introducción a las API y HTTP
+6.1 Cliente y servidor
+Una aplicación Android que consume datos de Internet actúa como cliente: realiza solicitudes y
+espera respuestas. Del otro lado hay un servidor, un programa que escucha esas solicitudes, las
+procesa (por ejemplo, consultando una base de datos) y devuelve una respuesta.
+Una API (Application Programming Interface) es, en este contexto, el conjunto de reglas que
+12
+
+--- PAGE 14 ---
+define cómo un cliente puede comunicarse con un servidor: qué solicitudes están permitidas, qué
+información hay que enviar y qué formato tendrá la respuesta. Cuando esa comunicación ocurre
+a través del protocolo HTTP y sigue ciertas convenciones (uso de recursos, métodos, códigos de
+estado), se suele hablar de API REST , que es el tipo de API más común en aplicaciones móviles.
+Android (cliente) ──── solicitud HTTP ────► Servidor
+Android (cliente) ◄──── respuesta HTTP ──── Servidor
+6.2 Request y response
+Toda comunicación HTTP se compone de una solicitud (request) y una respuesta (response) .
+Una solicitud incluye:
+• URL: la dirección del recurso solicitado (por ejemplo, https://api.ejemplo.com/usuarios).
+• Endpoint: la ruta específica dentro de esa API ( /usuarios, /usuarios/5).
+• Método HTTP : qué tipo de operación se solicita (ver 6.3).
+• Headers: información adicional sobre la solicitud (por ejemplo, el tipo de contenido enviado,
+o un token de autenticación).
+• Parámetros: datos adicionales, ya sea en la URL ( ?activo=true) o en el cuerpo.
+• Cuerpo (body) : datos que se envían al servidor, típicamente en solicitudes que crean o
+modifican información.
+Una respuesta incluye:
+• Código de estado : un número que indica el resultado (ver 6.4).
+• Headers de respuesta .
+• Cuerpo de la respuesta : los datos devueltos, normalmente en formato JSON.
+6.3 Métodos HTTP
+Método Uso habitual Ejemplo
+GET Obtener información, sin
+modificarla
+Obtener la lista de usuarios
+POST Crear un nuevo recurso, o
+ejecutar una acción que no
+encaja en los demás métodos
+Crear un nuevo usuario
+PUT Reemplazar por completo un
+recurso existente
+Actualizar todos los datos de
+un usuario
+P A TCH Modificar parcialmente un
+recurso existente
+Actualizar solo el email de un
+usuario
+DELETE Eliminar un recurso Eliminar un usuario
+Atención: esta tabla describe usos habituales, no una ley universal. No todas las API
+respetan estas convenciones de manera estricta; algunas usan POST para operaciones
+que conceptualmente parecen un GET, por ejemplo, cuando la solicitud requiere enviar
+muchos parámetros en el cuerpo. Conviene siempre revisar la documentación específica
+de la API que se está consumiendo.
+13
+
+--- PAGE 15 ---
+6.4 Códigos de estado HTTP
+Los códigos de estado se agrupan según su primer dígito:
+Grupo Significado general
+2xx Éxito: la solicitud se procesó correctamente
+3xx Redirección: el recurso está en otra ubicación
+4xx Error del cliente: la solicitud tiene un problema
+(datos inválidos, falta de autenticación, recurso
+inexistente)
+5xx Error del servidor: el servidor no pudo procesar
+una solicitud válida
+Códigos frecuentes:
+Código Significado
+200 OK — solicitud exitosa
+201 Created — se creó un recurso nuevo
+400 Bad Request — la solicitud está mal formada
+401 Unauthorized — falta autenticación o es inválida
+403 Forbidden — el cliente está autenticado pero no autorizado
+404 Not Found — el recurso solicitado no existe
+500 Internal Server Error — error inesperado en el servidor
+Nota: esta distinción va a ser clave en el Capítulo 14. Una respuesta con código 404 no
+es un error de red : el servidor respondió correctamente, informando que el recurso
+no existe. Confundir estos dos tipos de error es una fuente frecuente de bugs.
+CAPÍTULO 7 — JSON y conversión de datos
+7.1 ¿Qué es JSON?
+JSON (JavaScript Object Notation) es un formato de texto utilizado para representar datos es-
+tructurados de manera legible tanto para personas como para programas. Es, hoy, el formato más
+común para el cuerpo de las respuestas en API REST.
+{
+"id": 1,
+"nombre": "Pilar",
+"email": "pilar@email.com"
+}
+Un objeto JSON se representa entre llaves { } , y contiene pares propiedad: valor . Un array
+JSON, entre corchetes [ ] , representa una lista de elementos:
+14
+
+--- PAGE 16 ---
+[
+{ "id": 1, "nombre": "Pilar", "email": "pilar@email.com" },
+{ "id": 2, "nombre": "Tomás", "email": "tomas@email.com" }
+]
+Los tipos de datos básicos en JSON son: texto ( string), números, booleanos ( true/false), null,
+objetos y arrays.
+7.2 De JSON a Kotlin
+El objeto JSON del ejemplo anterior se representa en Kotlin mediante una data class :
+data class Usuario(
+val id: Int,
+val nombre: String,
+val email: String
+)
+El array JSON se representa como List<Usuario>.
+7.3 Serialización y deserialización
+• Deserialización: proceso de convertir texto JSON (recibido desde el servidor) en objetos
+Kotlin utilizables por la aplicación. Es lo que ocurre cuando la app recibe una respuesta.
+• Serialización: proceso inverso, convertir un objeto Kotlin en texto JSON. Es lo que ocurre
+cuando la app envía datos al servidor (por ejemplo, en el cuerpo de un POST).
+Este proceso no ocurre “mágicamente”: lo realiza una biblioteca llamada convertidor JSON (por
+ejemplo, Moshi o kotlinx.serialization), que Retrofit utiliza automáticamente una vez configurada.
+Vamos a volver sobre esto en el Capítulo 9.
+7.4 DTO y diferencia entre formato recibido y modelo interno
+Como se explicó en el Capítulo 3.3, el objeto que resulta de deserializar un JSON —el DTO— refleja
+exactamente la forma en que el servidor organiza los datos, que no siempre coincide con la forma en
+que la aplicación quiere trabajar internamente. Por ejemplo, el servidor puede enviar fechas como
+texto ( "2024-05-01"), mientras que la aplicación prefiere trabajar con un tipo LocalDate. Esa
+conversión, del DTO al modelo de dominio, suele resolverse en el Repository (Capítulo 5.6).
+CAPÍTULO 8 — Introducción a Retrofit
+8.1 ¿Qué es Retrofit?
+Retrofit es una biblioteca para Android y JVM que funciona como cliente HTTP declarativo :
+permite describir las solicitudes a una API REST mediante una interfaz de Kotlin, sin necesidad
+de escribir manualmente el código de bajo nivel que arma una solicitud HTTP, la envía y procesa
+la respuesta.
+15
+
+--- PAGE 17 ---
+Atención: Retrofit no es una base de datos , no es un servidor y no es una API .
+Retrofit es el intermediario que le permite a la aplicación Android comunicarse con una
+API que ya existe, del lado del servidor.
+8.2 ¿Qué problema resuelve?
+Sin Retrofit, consumir una API implica escribir manualmente: la apertura de una conexión HTTP,
+la construcción de la solicitud (URL, método, headers, cuerpo), el envío, la lectura de la respuesta
+como texto, y la conversión manual de ese texto a objetos Kotlin. Todo esto, además, debe ejecutarse
+fuera del hilo principal para no bloquear la interfaz.
+Retrofit automatiza todo ese proceso: el desarrollador describe qué solicitudes existen (mediante
+una interfaz con anotaciones) y Retrofit se encarga de ejecutarlas.
+8.3 Cómo funciona conceptualmente
+Retrofit se apoya en dos piezas complementarias:
+• OkHttp: la biblioteca que efectivamente realiza la comunicación HTTP a bajo nivel (abre la
+conexión, envía la solicitud, recibe la respuesta). Retrofit se construye sobre OkHttp.
+• Un convertidor JSON : la biblioteca que transforma el cuerpo de la respuesta (texto JSON)
+en objetos Kotlin, y viceversa.
+Interfaz de Retrofit (declarativa)
+│
+▼
+Retrofit arma la solicitud HTTP
+│
+▼
+OkHttp la envía por la red
+│
+▼
+Llega la respuesta (JSON como texto)
+│
+▼
+El convertidor JSON transforma el texto en objetos Kotlin
+│
+▼
+La función suspend devuelve el objeto ya convertido
+8.4 Qué hace Retrofit automáticamente, y qué no
+Hace automáticamente: - Construye la URL completa a partir de la URL base y el endpoint
+declarado. - Serializa objetos Kotlin a JSON para el cuerpo de una solicitud. - Deserializa el JSON
+recibido a objetos Kotlin. - Administra la ejecución de la solicitud en un hilo adecuado cuando se
+usan funciones suspend.
+No hace por sí solo: - No decide qué hacer si la respuesta fue un error (eso lo debe interpretar
+el código de la aplicación). - No cachea datos por defecto. - No maneja reintentos automáticos
+ante fallas de red, salvo que se configure explícitamente. - No reemplaza la necesidad de manejar
+excepciones (Capítulo 11 y 14).
+16
+
+--- PAGE 18 ---
+CAPÍTULO 9 — Configuración básica de Retrofit
+9.1 Dependencias necesarias
+En el archivo build.gradle.kts del módulo de la aplicación se agregan las dependencias de Retrofit,
+de un convertidor JSON y de OkHttp (para poder, por ejemplo, agregar un interceptor de logging):
+dependencies {
+implementation("com.squareup.retrofit2:retrofit:2.11.0")
+implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
+implementation("com.squareup.okhttp3:okhttp:4.12.0")
+implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+}
+Nota: las versiones exactas cambian con el tiempo. Antes de usar este fragmento en
+un proyecto real, conviene verificar las versiones vigentes en la documentación oficial de
+Retrofit y de Square.
+9.2 Permiso de Internet
+Como la aplicación va a comunicarse con un servidor externo, es necesario declarar el permiso
+correspondiente en AndroidManifest.xml:
+<uses-permission android:name="android.permission.INTERNET" />
+Sin este permiso, cualquier intento de conexión a la red falla, independientemente de que el código
+de Retrofit esté correctamente escrito.
+9.3 Creación de la instancia de Retrofit
+Retrofit se configura una única vez, y esa instancia se reutiliza en toda la aplicación (crearla repeti-
+damente es uno de los errores que vamos a señalar en el Capítulo 16).
+object RetrofitInstance {
+private const val BASE_URL = "https://api.ejemplo.com/"
+val api: UsuarioApi by lazy {
+Retrofit.Builder()
+.baseUrl(BASE_URL)
+.addConverterFactory(MoshiConverterFactory.create())
+.build()
+.create(UsuarioApi::class.java)
+}
+}
+Explicación línea por línea:
+17
+
+--- PAGE 19 ---
+• object RetrofitInstance : se declara como object (singleton de Kotlin) porque solo debe
+existir una instancia de Retrofit en toda la aplicación.
+• BASE_URL: la parte fija de todas las URLs que se van a usar; cada endpoint declarado en la
+interfaz se concatena a esta base.
+• by lazy { ... } : la instancia de Retrofit no se crea hasta que se usa por primera vez, y luego
+se reutiliza.
+• .baseUrl(BASE_URL): le indica a Retrofit cuál es la URL base.
+• .addConverterFactory(MoshiConverterFactory.create()): registra el convertidor JSON
+que Retrofit va a usar para serializar y deserializar automáticamente.
+• .build(): construye la instancia de Retrofit ya configurada.
+• .create(UsuarioApi::class.java): le pide a Retrofit que genere, automáticamente, una
+implementación de la interfaz UsuarioApi (definida en el Capítulo 10) que sabe cómo ejecutar
+cada solicitud declarada.
+Errores posibles: una BASE_URL mal escrita (sin / final, por ejemplo) puede provocar que las
+solicitudes fallen o apunten a una URL incorrecta; olvidar el convertidor JSON provoca errores en
+tiempo de ejecución al intentar deserializar la respuesta.
+9.4 Organización de archivos
+Siguiendo la estructura que vamos a usar en el Capítulo 12:
+data/remote/UsuarioApi.kt → interfaz de Retrofit
+data/remote/RetrofitInstance.kt → configuración e instancia de Retrofit
+data/model/UsuarioDto.kt → clase que representa el JSON recibido
+CAPÍTULO 10 — Definición de una API con Retrofit
+Cada anotación de Retrofit describe una parte de la solicitud HTTP. A continuación, se explican
+las más utilizadas.
+10.1 @GET
+Definición: anotación que declara una solicitud HTTP GET, usada para obtener información.
+Sintaxis:
+@GET("ruta")
+suspend fun nombreFuncion(): TipoDeRetorno
+Ejemplo:
+interface UsuarioApi {
+@GET("usuarios")
+suspend fun obtenerUsuarios(): List<UsuarioDto>
+}
+Explicación del ejemplo: @GET("usuarios") indica que esta función ejecuta una solicitud GET
+a BASE_URL + "usuarios" . suspend indica que es una función asíncrona, pensada para ejecutarse
+18
+
+--- PAGE 20 ---
+dentro de una corrutina (Capítulo 11). El tipo de retorno, List<UsuarioDto>, le indica a Retrofit
+y al convertidor JSON qué forma debe tener el resultado deserializado.
+Error frecuente: olvidar suspend obliga a manejar la solicitud con callbacks o de forma síncrona
+(bloqueando el hilo), perdiendo las ventajas que ofrecen las corrutinas.
+10.2 @Path
+Definición: permite insertar un valor variable dentro de la ruta del endpoint.
+Sintaxis:
+@GET("usuarios/{id}")
+suspend fun obtenerUsuarioPorId(@Path("id") id: Int): UsuarioDto
+Explicación: el texto {id} en la ruta es reemplazado, en tiempo de ejecución, por el valor del
+parámetro id, gracias a la anotación @Path("id"). El nombre entre paréntesis debe coincidir
+exactamente con el que aparece entre llaves en la ruta.
+Error frecuente: que el nombre en @Path("...") no coincida con el texto entre llaves de la ruta;
+esto genera un error en tiempo de compilación.
+10.3 @Query
+Definición: agrega un parámetro como parte de la URL, después del signo ? (por ejemplo, usuar-
+ios?activo=true).
+Sintaxis y ejemplo:
+@GET("usuarios")
+suspend fun obtenerUsuarios(@Query("activo") activo: Boolean): List<UsuarioDto>
+Explicación: si se llama a esta función con activo = true , Retrofit arma la URL usuar-
+ios?activo=true automáticamente.
+Error frecuente: confundir @Query con @Path. @Path reemplaza una parte fija de la ruta; @Query
+agrega parámetros opcionales al final de la URL.
+10.4 @Body
+Definición: indica que un objeto Kotlin debe enviarse serializado como el cuerpo de la solicitud
+(típicamente en POST, PUT o PATCH).
+Sintaxis y ejemplo:
+@POST("usuarios")
+suspend fun crearUsuario(@Body nuevoUsuario: NuevoUsuarioDto): UsuarioDto
+Explicación: el objeto nuevoUsuario se convierte automáticamente a JSON (gracias al convertidor
+configurado) y se envía en el cuerpo de la solicitud POST.
+Error frecuente: usar @Body en una solicitud GET; el método GET, por convención, no debería
+llevar cuerpo.
+19
+
+--- PAGE 21 ---
+10.5 @POST, @PUT, @PATCH, @DELETE
+Funcionan de manera análoga a @GET, pero declarando los métodos HTTP correspondientes descrip-
+tos en el Capítulo 6.3:
+@POST("usuarios")
+suspend fun crearUsuario(@Body usuario: NuevoUsuarioDto): UsuarioDto
+@PUT("usuarios/{id}")
+suspend fun actualizarUsuario(@Path("id") id: Int, @Body usuario: UsuarioDto): UsuarioDto
+@PATCH("usuarios/{id}")
+suspend fun actualizarEmail(@Path("id") id: Int, @Body cambios: Map<String, String>): UsuarioDto
+@DELETE("usuarios/{id}")
+suspend fun eliminarUsuario(@Path("id") id: Int)
+10.6 @Header y @Headers
+Definición: @Header agrega un encabezado cuyo valor puede variar por llamada (por ejemplo,
+un token de autenticación); @Headers declara uno o más encabezados fijos directamente sobre la
+función.
+@Headers("Accept: application/json" )
+@GET("usuarios")
+suspend fun obtenerUsuarios(@Header("Authorization") token: String): List<UsuarioDto>
+Explicación: @Headers("Accept: application/json") se aplica siempre que se llame a esta
+función. @Header("Authorization") token: String permite pasar un valor distinto en cada
+llamada (por ejemplo, el token del usuario actualmente autenticado).
+Error frecuente: usar @Headers (con “s”) cuando el valor debería variar dinámicamente; en ese
+caso corresponde @Header por parámetro.
+10.7 Tabla resumen
+Anotación Ubicación Qué representa
+@GET / @POST / @PUT / @PATCH
+/ @DELETE
+Sobre la función El método HTTP y el endpoint
+@Path Sobre un parámetro Un valor insertado en la ruta
+@Query Sobre un parámetro Un parámetro agregado a la
+URL
+@Body Sobre un parámetro El objeto que se envía como
+cuerpo
+@Header Sobre un parámetro Un encabezado con valor
+variable
+@Headers Sobre la función Uno o más encabezados fijos
+20
+
+--- PAGE 22 ---
+CAPÍTULO 11 — Coroutines y funciones suspend
+11.1 ¿Por qué una solicitud HTTP puede tardar?
+Una solicitud HTTP implica establecer una conexión de red, esperar que el servidor procese la
+solicitud y recibir la respuesta. Ese tiempo es variable e impredecible: puede tardar milisegundos o
+varios segundos, según la conexión y la carga del servidor.
+11.2 Bloquear el hilo principal
+Android ejecuta la interfaz de usuario en un único hilo, llamado hilo principal (main thread). Si
+una operación que tarda (como una solicitud HTTP) se ejecuta directamente en ese hilo, la interfaz
+queda congelada mientras dura la espera, y el sistema operativo puede considerar que la aplicación
+dejó de responder.
+11.3 ¿Qué es una coroutine?
+Una coroutine es un mecanismo del lenguaje Kotlin para ejecutar código de manera asíncrona
+sin bloquear el hilo que la inicia. Permite escribir código que “espera” un resultado (como una
+respuesta HTTP) de forma secuencial y legible, sin necesidad de callbacks anidados, mientras que
+por debajo esa espera no bloquea el hilo principal.
+11.4 ¿Qué significa suspend?
+suspend es un modificador que se aplica a una función para indicar que puede suspenderse: es
+decir, que puede pausar su ejecución en un punto (por ejemplo, mientras espera una respuesta de
+red) sin bloquear el hilo, y reanudarse más adelante cuando el resultado esté disponible.
+Atención: marcar una función como suspend no significa automáticamente que
+se ejecute en un hilo separado . suspend solo habilita que la función pueda pausarse
+y reanudarse; el hilo específico en el que se ejecuta depende del dispatcher utilizado
+(por ejemplo, Dispatchers.IO para operaciones de entrada/salida como la red). Retrofit,
+quando se usa con funciones suspend, ya administra esto de forma adecuada por defecto.
+11.5 viewModelScope
+Una función suspend no puede llamarse desde cualquier lugar: necesita ejecutarse dentro de una cor-
+rutina, y esa corrutina necesita un scope (alcance) que determine su ciclo de vida. viewModelScope
+es un scope de corrutinas provisto por Android que está ligado al ciclo de vida del ViewModel: si el
+ViewModel se destruye, las corrutinas lanzadas en ese scope se cancelan automáticamente, evitando
+fugas de memoria o actualizaciones de estado sobre un ViewModel que ya no existe.
+fun cargarUsuarios() {
+viewModelScope.launch {
+val usuarios = repository.obtenerUsuarios() // función suspend
+// ...
+}
+}
+viewModelScope.launch { ... } inicia una nueva corrutina dentro de ese alcance. Todo lo que
+esté dentro de las llaves puede invocar funciones suspend, como repository.obtenerUsuarios().
+21
+
+--- PAGE 23 ---
+11.6 Manejo introductorio de excepciones
+viewModelScope.launch {
+try {
+val usuarios = repository.obtenerUsuarios()
+// actualizar estado con éxito
+} catch (e: IOException) {
+// problema de conectividad (sin respuesta del servidor)
+} catch (e: Exception) {
+// error inesperado
+}
+}
+Es importante distinguir dos tipos de “error” que pueden ocurrir al consumir una API:
+• Excepción de red : ocurre cuando la solicitud ni siquiera pudo completarse (por ejemplo,
+no hay conexión a Internet, o se agotó el tiempo de espera). Se captura como una excepción
+(IOException, por ejemplo).
+• Respuesta HTTP con error : ocurre cuando la solicitud sí llegó al servidor y este respondió,
+pero con un código como 404 o 500. Esto no es necesariamente una excepción en Kotlin: es
+una respuesta válida que la aplicación debe interpretar como un error de negocio. Vamos a
+profundizar esta distinción en el Capítulo 14.
+CAPÍTULO 12 — Integración MVVM + Retrofit
+Este capítulo integra todo lo visto hasta ahora en un ejemplo único y coherente: una pantalla que
+consulta una lista de usuarios desde una API, mostrando los estados de carga, éxito y error, con
+posibilidad de reintentar.
+12.1 Estructura de carpetas
+com.example.app
+│
+├── data
+│ ├── remote
+│ │ ├── UsuarioApi.kt
+│ │ └── RetrofitInstance.kt
+│ ├── repository
+│ │ └── UsuarioRepository.kt
+│ └── model
+│ └── UsuarioDto.kt
+│
+├── domain
+│ └── Usuario.kt
+│
+├── presentation
+│ ├── UsuarioUiState.kt
+22
+
+--- PAGE 24 ---
+│ ├── UsuarioViewModel.kt
+│ └── UsuariosScreen.kt
+│
+└── MainActivity.kt
+Nota: esta es una organización posible entre varias razonables. Algunos proyectos
+agrupan model y domain en un mismo paquete, o usan nombres distintos ( network en
+lugar de remote, por ejemplo). Lo importante no es copiar exactamente esta estructura,
+sino entender el criterio: separar por responsabilidad (acceso a datos, lógica de dominio,
+presentación), no por tipo de archivo.
+12.2 Capa de datos
+// data/model/UsuarioDto.kt
+data class UsuarioDto(
+val id: Int,
+val nombre: String,
+val email: String
+)
+// data/remote/UsuarioApi.kt
+interface UsuarioApi {
+@GET("usuarios")
+suspend fun obtenerUsuarios(): List<UsuarioDto>
+}
+// data/remote/RetrofitInstance.kt
+object RetrofitInstance {
+private const val BASE_URL = "https://api.ejemplo.com/"
+val api: UsuarioApi by lazy {
+Retrofit.Builder()
+.baseUrl(BASE_URL)
+.addConverterFactory(MoshiConverterFactory.create())
+.build()
+.create(UsuarioApi::class.java)
+}
+}
+// domain/Usuario.kt
+data class Usuario(
+val id: Int,
+val nombre: String,
+val email: String
+)
+// data/repository/UsuarioRepository.kt
+interface UsuarioRepository {
+suspend fun obtenerUsuarios(): List<Usuario>
+}
+23
+
+--- PAGE 25 ---
+class UsuarioRepositoryImpl(
+private val api: UsuarioApi = RetrofitInstance.api
+) : UsuarioRepository {
+override suspend fun obtenerUsuarios(): List<Usuario> {
+return api.obtenerUsuarios().map { dto ->
+Usuario(id = dto.id, nombre = dto.nombre, email = dto.email)
+}
+}
+}
+12.3 Capa de presentación
+// presentation/UsuarioUiState.kt
+data class UsuarioUiState(
+val estaCargando: Boolean = false,
+val usuarios: List<Usuario> = emptyList(),
+val error: String? = null
+)
+// presentation/UsuarioViewModel.kt
+class UsuarioViewModel(
+private val repository: UsuarioRepository = UsuarioRepositoryImpl()
+) : ViewModel() {
+private val _uiState = MutableStateFlow(UsuarioUiState())
+val uiState: StateFlow<UsuarioUiState> = _uiState.asStateFlow()
+init {
+cargarUsuarios()
+}
+fun cargarUsuarios() {
+viewModelScope.launch {
+_uiState.update { it.copy(estaCargando = true, error = null) }
+try {
+val usuarios = repository.obtenerUsuarios()
+_uiState.update { it.copy(estaCargando = false, usuarios = usuarios) }
+} catch (e: IOException) {
+_uiState.update { it.copy(estaCargando = false, error = "Sin conexión a Internet" ) }
+} catch (e: Exception) {
+_uiState.update { it.copy(estaCargando = false, error = "Ocurrió un error inesperado" ) }
+}
+}
+}
+}
+24
+
+--- PAGE 26 ---
+// presentation/UsuariosScreen.kt
+@Composable
+fun UsuariosScreen(viewModel: UsuarioViewModel = viewModel()) {
+val estado by viewModel.uiState.collectAsState()
+Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+when {
+estado.estaCargando -> {
+CircularProgressIndicator()
+}
+estado.error != null -> {
+Text(text = estado.error ?: "")
+Button(onClick = { viewModel.cargarUsuarios() }) {
+Text("Reintentar")
+}
+}
+else -> {
+LazyColumn {
+items(estado.usuarios) { usuario ->
+Text(text = "${usuario.nombre} — ${usuario.email}")
+}
+}
+}
+}
+}
+}
+// MainActivity.kt
+class MainActivity : ComponentActivity() {
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
+setContent {
+MaterialTheme {
+UsuariosScreen()
+}
+}
+}
+}
+12.4 Comparación con el punto de partida
+Vale la pena comparar este resultado con el ejemplo del Capítulo 2: MainActivity ya no conoce
+nada sobre Retrofit, ni sobre cómo se procesan los datos, ni sobre las reglas para decidir si hubo
+error. Su única responsabilidad es establecer el contenido de la pantalla. Cada responsabilidad
+identificada en el Capítulo 2 (acceso a datos, procesamiento, estado, interfaz) ahora tiene un lugar
+propio y acotado.
+25
+
+--- PAGE 27 ---
+CAPÍTULO 13 — Estado de la UI
+13.1 ¿Por qué se necesita representar distintos estados?
+Una pantalla que consume datos remotos no muestra siempre lo mismo: al principio no hay datos,
+luego puede estar esperando una respuesta, después puede mostrar los datos obtenidos o, si algo
+falla, un mensaje de error. Si no se modela esto explícitamente, es fácil caer en combinaciones de
+variables independientes que generan estados incoherentes (por ejemplo, estaCargando = true y
+error = "algo falló" al mismo tiempo).
+Los estados mínimos que suele necesitar una pantalla de este tipo son:
+• Estado inicial : antes de que se solicite cualquier dato.
+• Carga: mientras se espera la respuesta.
+• Éxito: los datos se obtuvieron correctamente.
+• Error: ocurrió un problema.
+• Lista vacía : la solicitud fue exitosa, pero no hay elementos que mostrar (un caso particular
+de éxito que suele merecer su propio mensaje).
+13.2 Dos alternativas de modelado
+Alternativa 1: una única data class con campos combinables , como la usada en el Capítulo
+12:
+data class UsuarioUiState(
+val estaCargando: Boolean = false,
+val usuarios: List<Usuario> = emptyList(),
+val error: String? = null
+)
+Ventaja: simple de escribir y de leer en pantallas con pocos estados posibles. Desventaja: nada
+impide, a nivel de tipos, tener estaCargando = true junto con un error no nulo al mismo tiempo;
+la coherencia depende de la disciplina del código que actualiza el estado.
+Alternativa 2: una sealed interface , donde cada estado es un tipo distinto:
+sealed interface UsuarioUiState {
+data object Cargando : UsuarioUiState
+data class Exito(val usuarios: List<Usuario>) : UsuarioUiState
+data class Error(val mensaje: String) : UsuarioUiState
+data object Inicial : UsuarioUiState
+}
+Ventaja: el compilador obliga a manejar todos los casos posibles (gracias a when exhaustivo), y
+resulta imposible representar una combinación incoherente, como “cargando” con datos de error a
+la vez. Desventaja: requiere un poco más de código, y puede resultar menos directo para modelar
+estados que combinan varios campos simultáneamente (por ejemplo, mostrar datos previos mientras
+se recarga en segundo plano).
+26
+
+--- PAGE 28 ---
+13.3 Cómo Compose observa el estado
+Independientemente de la alternativa elegida, la View observa el estado mediante collectAsState()
+(si es un StateFlow) y usa una expresión when para decidir qué mostrar:
+when (val estado = viewModel.uiState.collectAsState().value) {
+is UsuarioUiState.Inicial -> { }
+is UsuarioUiState.Cargando -> CircularProgressIndicator()
+is UsuarioUiState.Error -> Text(estado.mensaje)
+is UsuarioUiState.Exito -> ListaDeUsuarios(estado.usuarios)
+}
+13.4 Distinción de conceptos relacionados
+Concepto Qué representa
+Estado de datos Los datos concretos obtenidos (la lista de
+usuarios)
+Estado de carga Si hay una operación en curso
+Estado de error Si algo falló, y qué información hay disponible
+al respecto
+Eventos de UI Acciones puntuales, no persistentes, como
+“mostrar un mensaje una sola vez” (por
+ejemplo, un Snackbar), que no deberían
+modelarse igual que un estado persistente
+Nota: en aplicaciones más avanzadas, los eventos puntuales (como mostrar un mensaje
+una única vez) suelen manejarse con mecanismos distintos al estado persistente (por
+ejemplo, un SharedFlow), precisamente porque un estado observado por Compose puede
+volver a emitirse en una recomposición, mientras que un evento debería consumirse una
+sola vez. Este apunte no profundiza ese tema, pero conviene que quede mencionado.
+CAPÍTULO 14 — Manejo de errores
+14.1 Categorías de error a considerar
+Categoría Descripción Ejemplo
+Conectividad No hay conexión a Internet
+disponible
+UnknownHostException
+Timeout El servidor no respondió
+dentro del tiempo esperado
+SocketTimeoutException
+Errores de conversión El JSON recibido no coincide
+con la estructura esperada
+JsonDataException
+Respuestas HTTP con
+error
+El servidor respondió, pero con
+un código 4xx o 5xx
+404, 500
+27
+
+--- PAGE 29 ---
+Categoría Descripción Ejemplo
+Errores inesperados Cualquier excepción no
+anticipada
+Exception genérica
+14.2 Por qué “capturar Exception” no alcanza
+try {
+val usuarios = repository.obtenerUsuarios()
+} catch (e: Exception) {
+// "Ocurrió un error" — mensaje sin información útil
+}
+Capturar únicamente Exception de forma genérica resuelve el problema de que la app no se cierre,
+pero no distingue qué falló. Desde el punto de vista del usuario, no es lo mismo “no tenés conexión
+a Internet” que “el servidor no está disponible en este momento” . Un manejo de errores más útil
+distingue tipos de excepción y, cuando corresponde, códigos de respuesta HTTP:
+try {
+val respuesta = api.obtenerUsuariosResponse() // Response<List<UsuarioDto>>
+if (respuesta.isSuccessful) {
+val usuarios = respuesta.body()?.map { it.toUsuario() } ?: emptyList()
+_uiState.update { it.copy(estaCargando = false, usuarios = usuarios) }
+} else {
+val mensaje = when (respuesta.code()) {
+404 -> "No se encontraron usuarios"
+500 -> "El servidor no está disponible"
+else -> "Error del servidor ( ${respuesta.code()})"
+}
+_uiState.update { it.copy(estaCargando = false, error = mensaje) }
+}
+} catch (e: IOException) {
+_uiState.update { it.copy(estaCargando = false, error = "Verificá tu conexión a Internet" ) }
+} catch (e: Exception) {
+_uiState.update { it.copy(estaCargando = false, error = "Ocurrió un error inesperado" ) }
+}
+Qué cambia respecto del ejemplo del Capítulo 12: aquí se usa Response<List<UsuarioDto>>
+como tipo de retorno de la función de Retrofit (en lugar de List<UsuarioDto> directamente), lo
+que permite inspeccionar el código de estado HTTP ( respuesta.code()) y distinguir entre una
+respuesta exitosa y una respuesta de error, sin necesidad de que esta última se traduzca en una
+excepción de Kotlin.
+14.3 Por qué esto le importa al usuario
+Un mensaje de error genérico (“Ocurrió un error”) no le permite al usuario entender si el problema
+es de su conexión, algo temporal del servidor, o si el recurso simplemente no existe. Distinguir el
+tipo de error, aunque sea con mensajes simples, mejora sensiblemente la experiencia de uso y facilita
+el diagnóstico de problemas durante el desarrollo.
+28
+
+--- PAGE 30 ---
+CAPÍTULO 15 — Ejemplo completo paso a paso
+Este capítulo recorre, en orden, la construcción completa de la pantalla de usuarios, explicando qué
+ocurre en cada etapa y qué relación tiene con la arquitectura estudiada.
+Paso 1 — Definir el modelo.
+data class Usuario(val id: Int, val nombre: String, val email: String)
+data class UsuarioDto(val id: Int, val nombre: String, val email: String)
+Relación con la arquitectura: separa el formato de red ( UsuarioDto) del modelo interno ( Usuario),
+como se explicó en el Capítulo 3.3.
+Paso 2 — Definir la interfaz de Retrofit.
+interface UsuarioApi {
+@GET("usuarios")
+suspend fun obtenerUsuarios(): List<UsuarioDto>
+}
+Relación con la arquitectura: describe declarativamente el único endpoint que la app necesita, sin
+ejecutar ninguna lógica.
+Paso 3 — Configurar Retrofit.
+object RetrofitInstance {
+val api: UsuarioApi by lazy {
+Retrofit.Builder()
+.baseUrl("https://api.ejemplo.com/")
+.addConverterFactory(MoshiConverterFactory.create())
+.build()
+.create(UsuarioApi::class.java)
+}
+}
+Relación con la arquitectura: crea una única instancia reutilizable, evitando el error frecuente de-
+scripto en el Capítulo 16.
+Paso 4 — Crear el Repository .
+class UsuarioRepositoryImpl(private val api: UsuarioApi) : UsuarioRepository {
+override suspend fun obtenerUsuarios(): List<Usuario> =
+api.obtenerUsuarios().map { Usuario(it.id, it.nombre, it.email) }
+}
+Relación con la arquitectura: oculta Retrofit detrás de una interfaz simple, como se explicó en el
+Capítulo 5.
+Paso 5 — Crear el estado de UI.
+data class UsuarioUiState(
+val estaCargando: Boolean = false,
+29
+
+--- PAGE 31 ---
+val usuarios: List<Usuario> = emptyList(),
+val error: String? = null
+)
+Paso 6 — Crear el ViewModel.
+class UsuarioViewModel(private val repository: UsuarioRepository) : ViewModel() {
+private val _uiState = MutableStateFlow(UsuarioUiState())
+val uiState = _uiState.asStateFlow()
+fun cargarUsuarios() {
+viewModelScope.launch {
+_uiState.update { it.copy(estaCargando = true, error = null) }
+try {
+val usuarios = repository.obtenerUsuarios()
+_uiState.update { it.copy(estaCargando = false, usuarios = usuarios) }
+} catch (e: Exception) {
+_uiState.update { it.copy(estaCargando = false, error = "No se pudieron cargar los usuarios" ) }
+}
+}
+}
+}
+Paso 7 — Crear la pantalla Compose.
+@Composable
+fun UsuariosScreen(viewModel: UsuarioViewModel) {
+val estado by viewModel.uiState.collectAsState()
+LaunchedEffect(Unit) { viewModel.cargarUsuarios() }
+// ... contenido según estado, como en el Capítulo 12
+}
+Paso 8 — Conectar todo desde la Activity .
+class MainActivity : ComponentActivity() {
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
+val viewModel = UsuarioViewModel(UsuarioRepositoryImpl(RetrofitInstance.api))
+setContent { UsuariosScreen(viewModel) }
+}
+}
+Pasos 9 a 12 — Ejecución del flujo completo.
+Cuando la pantalla se muestra por primera vez, LaunchedEffect(Unit) dispara view-
+Model.cargarUsuarios() una única vez. Esto actualiza el estado a “cargando”, lo que Compose
+refleja mostrando un indicador de progreso. El ViewModel espera la respuesta del Repository:
+• Si la API responde correctamente , el Repository entrega la lista convertida de Usuario, el
+ViewModel actualiza el estado con estaCargando = false y usuarios completos, y Compose
+recompone la pantalla mostrando la lista.
+30
+
+--- PAGE 32 ---
+• Si la API falla (ya sea por un problema de conectividad o por una excepción durante el
+procesamiento), el bloque catch actualiza el estado con estaCargando = false y un mensaje
+de error, y Compose recompone la pantalla mostrando ese mensaje en lugar de la lista.
+CAPÍTULO 16 — Errores comunes y malas prácticas
+1. Hacer llamadas HTTP directamente desde un Composable. Qué está mal: invocar
+api.obtenerUsuarios() dentro del cuerpo de una función @Composable. Por qué está mal: un
+Composable puede ejecutarse (recomponerse) muchas veces y en momentos impredecibles; disparar
+una solicitud de red en cada recomposición genera llamadas repetidas e innecesarias. Problema que
+genera: consumo excesivo de red, comportamiento errático, imposibilidad de probar la lógica de
+forma aislada. Corrección: delegar la solicitud al ViewModel, y dispararla desde un mecanismo
+controlado como LaunchedEffect o desde el evento explícito del usuario.
+2. Colocar toda la lógica en MainActivity . Qué está mal: retomar el patrón del Capítulo 2
+dentro de una app que “parece” usar MVVM, pero concentrando lógica en la Activity de todos modos.
+Por qué está mal: anula el beneficio de tener ViewModel y Repository. Corrección: la Activity solo
+debe configurar el contenido inicial ( setContent) y, a lo sumo, crear o inyectar dependencias.
+3. Crear una instancia de Retrofit repetidamente. Qué está mal: llamar a
+Retrofit.Builder()...build() cada vez que se necesita hacer una solicitud. Por qué está
+mal: cada instancia de Retrofit reconstruye su configuración interna (incluyendo el cliente OkHttp),
+lo cual es costoso y desperdicia recursos. Corrección: usar una única instancia reutilizable, como
+se mostró en el Capítulo 9 (patrón object con by lazy ).
+4. Bloquear el hilo principal. Qué está mal: ejecutar una solicitud HTTP de forma síncrona, sin
+suspend ni un dispatcher adecuado. Por qué está mal: congela la interfaz mientras dura la solicitud,
+generando una mala experiencia y, en casos extremos, un cierre forzado de la aplicación. Corrección:
+usar funciones suspend en la interfaz de Retrofit y ejecutar la solicitud dentro de viewModelScope.
+5. No manejar errores. Qué está mal: asumir que la solicitud siempre va a ser exitosa. Prob-
+lema que genera: la app se cierra inesperadamente ante cualquier falla de red, o el usuario queda
+sin ninguna indicación de qué ocurrió. Corrección: aplicar lo desarrollado en el Capítulo 14, distin-
+guiendo tipos de error y comunicándolos con claridad.
+6. No representar el estado de carga. Qué está mal: mostrar una pantalla vacía o congelada
+mientras se espera la respuesta, sin ningún indicador. Problema que genera: el usuario no sabe si
+la app está funcionando o se colgó. Corrección: incluir siempre un estado de carga explícito, como
+se vio en el Capítulo 13.
+7. Mezclar DTO y modelo de dominio sin criterio. Qué está mal: usar directamente el DTO
+en toda la aplicación, incluida la interfaz. Problema que genera: cualquier cambio en el formato del
+backend impacta directamente en la interfaz de usuario, incluso cuando la aplicación no necesitaría
+verse afectada. Corrección: distinguir DTO de modelo de dominio y convertir en el Repository,
+como se explicó en el Capítulo 3.3 y 5.6.
+8. Que el ViewModel conozca detalles innecesarios de la interfaz. Qué está mal: pasarle
+al ViewModel referencias a Context, a Composables o a elementos visuales específicos. Problema
+que genera: acopla la lógica de presentación a detalles de Android UI, dificultando las pruebas y
+31
+
+--- PAGE 33 ---
+violando la separación de responsabilidades del Capítulo 3.2. Corrección: el ViewModel solo debería
+exponer estado y funciones; la interpretación visual de ese estado es responsabilidad exclusiva de la
+View.
+9. Crear demasiadas capas sin justificación. Qué está mal: introducir abstracciones (inter-
+faces, casos de uso, capas intermedias) que no resuelven ningún problema concreto del proyecto.
+Problema que genera: complejidad innecesaria, código más difícil de seguir, sin beneficios reales a
+cambio. Corrección: agregar una capa solo cuando resuelve un problema identificable (como se
+explicó respecto del Repository en el Capítulo 5.6).
+10. Copiar código sin comprenderlo. Qué está mal: reproducir fragmentos de código de
+este apunte, o de cualquier otra fuente, sin entender qué hace cada línea. Problema que genera:
+imposibilidad de adaptar el código a un problema distinto, de depurarlo cuando falla, o de explicarlo
+en una evaluación. Corrección: volver a la explicación línea por línea de cada capítulo antes de
+reutilizar un fragmento de código.
+CAPÍTULO 17 — MVVM, Retrofit y ciclo de vida
+17.1 ViewModel y ciclo de vida
+Como se mencionó en el Capítulo 3.2, el ViewModel está diseñado para sobrevivir a la recreación de
+la Activity o Fragment que lo aloja, siempre que esa recreación ocurra dentro del mismo ViewMod-
+elStoreOwner (por ejemplo, ante una rotación de pantalla). Esto significa que, si el usuario rota
+el dispositivo mientras los datos ya se cargaron, no es necesario volver a solicitarlos: el ViewModel
+conserva su estado.
+17.2 Qué sucede ante una recomposición
+Una recomposición es la re-ejecución de una función @Composable cuando cambia el estado del que
+depende. Es un mecanismo pensado para ser frecuente y económico : Compose puede recomponer
+una porción de la interfaz muchas veces sin que eso implique ningún costo relevante, siempre que el
+cuerpo del Composable no contenga efectos secundarios (como disparar una solicitud de red).
+Atención: justamente por eso, invocar una función suspend o iniciar una solicitud de
+red directamente en el cuerpo de un Composable (fuera de un mecanismo de efectos) es
+incorrecto: se ejecutaría en cada recomposición, no solo cuando corresponde.
+17.3 LaunchedEffect
+Para ejecutar código con efectos secundarios (como disparar la primera carga de datos) de manera
+controlada, Compose ofrece LaunchedEffect:
+LaunchedEffect(Unit) {
+viewModel.cargarUsuarios()
+}
+LaunchedEffect inicia una corrutina ligada al ciclo de vida del Composable en el que se declara.
+La clave ( Unit, en este caso) determina cuándo debe reiniciarse ese efecto: con Unit, el efecto se
+32
+
+--- PAGE 34 ---
+ejecuta una sola vez mientras el Composable permanezca en composición. Si la clave cambiara (por
+ejemplo, un ID de usuario), el efecto se relanzaría cada vez que ese valor cambie.
+LaunchedEffect no es un mecanismo “mágico”: es, concretamente, una manera de decirle a Com-
+pose “ejecutá esta corrutina cuando el Composable entre en composición, y cancelala cuando salga”,
+de forma coherente con el ciclo de vida de la interfaz.
+17.4 Recordar un valor vs. conservar el estado de una pantalla
+remember (usado, por ejemplo, como remember { mutableStateOf(...) } ) conserva un valor
+mientras el Composable permanece en composición , pero ese valor se pierde si el Composable
+sale de composición (por ejemplo, ante una rotación de pantalla, si no se usa en conjunto con
+mecanismos adicionales). El estado gestionado por un ViewModel, en cambio, sobrevive a esos
+eventos, porque no depende del ciclo de vida de la composición sino del ViewModelStoreOwner.
+Nota: esta distinción explica por qué el estado que representa datos obtenidos de una
+API (que no queremos volver a solicitar innecesariamente) debe vivir en el ViewModel,
+mientras que un estado puramente visual y efímero (como si un menú desplegable está
+abierto) puede vivir perfectamente en un remember dentro de la propia View.
+CAPÍTULO 18 — Síntesis conceptual
+18.1 Mapa conceptual
+Arquitectura de software
+│
+▼
+MVVM
+│
+┌────┼─────────────┐
+▼ ▼ ▼
+View ViewModel Model
+│ │
+▼ ▼
+Repository ───────► (DTO / dominio)
+│
+▼
+Retrofit
+│
+▼
+HTTP
+│
+▼
+API
+│
+▼
+JSON
+│
+33
+
+--- PAGE 35 ---
+▼
+Estado de UI (UsuarioUiState)
+│
+▼
+Compose (recomposición)
+18.2 Tabla de responsabilidades
+Componente Responsabilidad Qué no debería hacer
+View (Compose) Mostrar la interfaz según un
+estado; capturar eventos del
+usuario
+Contener lógica de negocio;
+saber de dónde vienen los
+datos
+ViewModel Administrar el estado de la
+pantalla; recibir eventos;
+coordinar la obtención de
+datos
+Conocer detalles de Compose o
+de Android UI; acceder
+directamente a Retrofit
+Repository Decidir la fuente de datos;
+convertir DTO a modelo de
+dominio
+Administrar estado de interfaz;
+saber qué pantalla lo está
+usando
+API (Retrofit) Declarar y ejecutar solicitudes
+HTTP
+Tomar decisiones de negocio;
+interpretar el significado de los
+datos
+Model (DTO / dominio) Representar los datos, en el
+formato de red o en el formato
+interno
+Contener lógica de
+presentación
+18.3 Flujo completo de una petición
+Usuario interactúa
+│
+▼
+View → evento → ViewModel
+│
+▼
+Repository
+│
+▼
+Retrofit → HTTP → API
+│
+▼
+JSON de respuesta
+│
+▼
+Repository convierte DTO → modelo de dominio
+│
+▼
+ViewModel actualiza el estado (UiState)
+34
+
+--- PAGE 36 ---
+│
+▼
+Compose observa el cambio y recompone la View
+18.4 Preguntas de comprensión
+¿Por qué no conviene realizar una llamada HTTP desde un Composable? Porque un
+Composable puede recomponerse múltiples veces de forma impredecible, y una llamada de red en
+su cuerpo se repetiría en cada recomposición. Además, mezclar acceso a datos con lógica de interfaz
+rompe la separación de responsabilidades central de MVVM.
+¿Qué responsabilidad tiene el ViewModel? Administrar el estado de una pantalla, recibir
+los eventos que genera la View, y coordinar (a través del Repository) la obtención de los datos
+necesarios para actualizar ese estado.
+¿Qué problema resuelve el Repository? Centraliza el acceso a los datos y oculta al ViewModel
+de dónde provienen (API, base de datos, memoria), permitiendo cambiar la fuente de datos sin
+modificar el ViewModel.
+¿Qué diferencia existe entre Retrofit y una API? La API es el servicio remoto que expone
+los datos a través de HTTP; Retrofit es la biblioteca que, del lado de la aplicación Android, permite
+describir y ejecutar solicitudes hacia esa API.
+¿Qué significa que una función sea suspend? Que puede suspenderse (pausar su ejecución) sin
+bloquear el hilo que la invocó, y reanudarse cuando el resultado esté disponible; no implica, por sí
+sola, que se ejecute en un hilo distinto.
+¿Por qué una respuesta HTTP 404 no es necesariamente una excepción de red? Porque
+el servidor respondió correctamente al pedido, informando que el recurso no existe; esto es distinto
+de un fallo en la comunicación misma (por ejemplo, ausencia de conexión), que sí se manifiesta
+como una excepción como IOException.
+¿Qué sucede cuando cambia el estado observado por Compose? Compose vuelve a ejecutar
+las funciones @Composable que dependen de ese estado (recomposición), actualizando la interfaz para
+reflejar el nuevo valor.
+¿Qué ventajas ofrece separar la UI del acceso a datos? Permite probar la lógica de negocio
+sin depender de la interfaz, reutilizar esa lógica en distintas pantallas, modificar la fuente de datos
+sin tocar la interfaz, y mantener cada componente enfocado en una única responsabilidad.
+18.5 Actividad práctica
+Consigna: desarrollar una aplicación Android en Kotlin y Jetpack Compose que consuma una
+API pública (por ejemplo, una API REST de prueba de las que existen disponibles gratuitamente),
+mostrando una lista de elementos obtenidos de esa API.
+Objetivos: - Aplicar correctamente la separación de responsabilidades del patrón MVVM. - Inte-
+grar Retrofit para consumir un endpoint real. - Representar y manejar los estados de carga, éxito
+y error.
+Requisitos funcionales: - La pantalla debe mostrar una lista de elementos obtenidos desde la
+API al iniciarse. - Debe mostrarse un indicador mientras se cargan los datos. - Debe mostrarse un
+35
+
+--- PAGE 37 ---
+mensaje claro si ocurre un error, con la posibilidad de reintentar. - Debe contemplarse el caso de
+una lista vacía.
+Requisitos técnicos: - Uso de Retrofit con funciones suspend. - Separación en capas: modelo
+(DTO y dominio), Repository, ViewModel, View. - Manejo de errores diferenciando, como mín-
+imo, problemas de conectividad de errores de respuesta del servidor. - Estado de UI representado
+explícitamente (mediante data class o sealed interface).
+Estructura sugerida: la propuesta en el Capítulo 12.1, adaptada al dominio elegido.
+Entregables: - Código fuente del proyecto. - Breve documento (media carilla) explicando las
+decisiones de diseño tomadas: por qué se organizó el proyecto de esa manera, qué alternativas se
+consideraron.
+Criterios de evaluación: - Correcta separación de responsabilidades entre View, ViewModel,
+Repository y API. - Manejo adecuado y diferenciado de los estados de la pantalla. - Manejo de
+errores que distinga tipos de problema, no solo un mensaje genérico. - Código legible, sin lógica de
+negocio ubicada en la Activity ni en los Composables. - Justificación coherente de las decisiones de
+diseño en el documento entregado.
+Preguntas de reflexión para incluir en el entregable: - ¿Qué parte de tu aplicación sería más
+difícil de modificar si cambiara la fuente de datos? ¿Por qué? - Si tuvieras que agregar una base
+de datos local para guardar los datos obtenidos, ¿en qué componente de tu arquitectura harías ese
+cambio, y por qué no en otro? - ¿Qué decisión de diseño de tu proyecto te generó más dudas, y
+cómo la resolviste?
+Fin del apunte. Este material cubre los fundamentos necesarios para diseñar e implementar una
+pantalla Android que consuma una API REST siguiendo el patrón MVVM. Las versiones de bibliote-
+cas y APIs de Android evolucionan con el tiempo: antes de aplicar este contenido en un proyecto
+real, se recomienda verificar la documentación oficial vigente de Android, Kotlin y Retrofit.
+36

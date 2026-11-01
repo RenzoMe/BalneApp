@@ -1,0 +1,121 @@
+--- PAGE 1 ---
+P e r m i s o s  y  m a n e j o  d e  d a t o s
++  b u e n a s  p r á c t i c a s
+ISFT 194
+
+
+--- PAGE 2 ---
+Antes de avanzar con permisos, conviene repasar
+brevemente los conceptos de la clase anterior,
+porque hoy vamos a apoyarnos en ellos: para
+guardar datos de forma segura, primero hay que
+saber dónde y cómo se guardan. 
+Repaso: Persistencia de
+datos y almacenamiento
+interno
+
+
+--- PAGE 3 ---
+Vimos que un valor guardado con remember vive
+únicamente en memoria y se pierde al cerrar la
+app. Persistir un dato significa guardarlo de forma
+que sobreviva al cierre de la aplicación.
+Repaso: Persistencia de
+datos y almacenamiento
+interno
+ Estado vs. persistencia
+
+--- PAGE 4 ---
+Repaso: Persistencia de
+datos y almacenamiento
+interno
+La clase pasada aprendimos a guardar datos. Hoy aprendemos a pedir permiso antes de generarlos oacceder a ellos, y a manejarlos con responsabilidad. 
+
+--- PAGE 5 ---
+Un permiso es una autorización que el sistema operativo
+exige antes de que una aplicación pueda acceder a un
+recurso sensible o a información del usuario
+Recursos como la cámara, la ubicación, los contactos, el
+micrófono o el almacenamiento de archivos multimedia
+no están disponibles libremente para cualquier app:
+Android obliga a declarar qué se va a usar y, en muchos
+casos, a pedirle confirmación explícita al usuario antes
+de acceder.
+Introducción a los permisos en
+Androi
+¿ Qué es un permiso? 
+
+--- PAGE 6 ---
+Imaginemos una app de linterna que, sin pedir
+nada, empieza a leer la lista de contactos del
+usuario. Sin un sistema de permisos, cualquier
+aplicación podría acceder a información privada
+sin que el usuario se entere ni pueda impedirlo. 
+ El problema que
+resuelven
+L a  d e c i s i ó n  f i n a l  s i e m p r e  e s  d e l  u s u a r i o ,  n o  d e  l a  a p l i c a c i ó n
+
+--- PAGE 7 ---
+No todos los permisos se piden de la misma forma.
+Android los agrupa en tres grandes categorías,
+según qué tan sensible sea el recurso al que dan
+acceso.
+ El problema que
+resuelven
+
+--- PAGE 8 ---
+TIPO DEPERMISOS
+Permisos normales(normal) 
+D a n  a c c e s o  a  d a t o s  o  a c c i o n e s  d e
+b a j o  r i e s g o  p a r a  l a  p r i v a c i d a d  d e l
+u s u a r i o .  S e  c o n c e d e n
+a u t o m á t i c a m e n t e  a l  i n s t a l a r  l a
+a p p ,  c o n  s o l o  d e c l a r a r l o s  e n  e l
+M a n i f e s t .  E j e m p l o s :
+Permisos peligrosos(dangerous)
+D a n  a c c e s o  a  i n f o r m a c i ó n  o
+f u n c i o n e s  s e n s i b l e s  d e l  u s u a r i o .
+R e q u i e r e n ,  a d e m á s  d e  d e c l a r a r s e
+e n  e l  M a n i f e s t ,  s e r  s o l i c i t a d o s
+e x p l í c i t a m e n t e  e n  t i e m p o  d e
+e j e c u c i ó n  ( r u n t i m e ) ,  m o s t r a n d o  u n
+d i á l o g o  d e l  s i s t e m a .  E j e m p l o s : Permisos especiales(special)
+D a n  a c c e s o  a  f u n c i o n e s  m u y
+s e n s i b l e s  d e l  s i s t e m a .  N o  s e  p i d e n
+c o n  e l  d i á l o g o  e s t á n d a r :  e l  u s u a r i o
+d e b e  h a b i l i t a r l o s  m a n u a l m e n t e
+d e s d e  u n a  p a n t a l l a  d e
+C o n f i g u r a c i ó n  d e l  s i s t e m a ,  a  l a
+q u e  l a  a p p  p u e d e  d i r i g i r l o
+m e d i a n t e  u n  I n t e n t .  E j e m p l o s :
+
+--- PAGE 9 ---
+Declarar permisos en el Manifest
+El primer paso, para cualquier tipo de permiso, es declararlo en el archivo AndroidManifest.xml. Estadeclaración le informa al sistema (y al usuario, cuando instala o actualiza la app desde una tienda) quépermisos podría llegar a solicitar la aplicación
+Declarar el permiso en el Manifest es una condición necesaria pero no suficiente para los permisospeligrosos: sin esta declaración, la solicitud en tiempo de ejecución directamente falla, pero declararlono alcanza para tener el permiso concedido. Falta el segundo paso, que vemos a continuación
+
+--- PAGE 10 ---
+Desde Android 6.0 (API 23), los permisos peligrosos no se conceden solo por
+declararlos en el Manifest: la app debe pedirlos explícitamente mientras se está
+ejecutando, típicamente justo antes de usar el recurso. Esto le da al usuario contexto
+sobre por qué se le está pidiendo ese acceso.
+ ¿ Por qué en tiempo de ejecución?
+Los tres estados de un permiso
+Permisos
+en tiempo
+de
+ejecución
+(runtime) 
+
+--- PAGE 11 ---
+Solicitar permisos desde
+Jetpack Compose
+Compose no tiene un mecanismo propio para pedir permisos: se apoya
+en la API de Activity Result Contracts, envuelta en un
+rememberLauncherForActivityResult.
+
+--- PAGE 12 ---
+
+
+--- PAGE 13 ---
+Vamos a ver un proyecto!

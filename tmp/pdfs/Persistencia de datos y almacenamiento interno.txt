@@ -1,0 +1,185 @@
+--- PAGE 1 ---
+P e r s i s t e n c i a  d e
+d a t o s  y
+a l m a c e n a m i e n t o
+i n t e r n o
+i s f t  1 9 4
+
+--- PAGE 2 ---
+A l  f i n a l i z a r  e s t a  c l a s e ,  e l  a l u m n o  s e r á  c a p a z  d e :  
+●  E x p l i c a r  l a  d i f e r e n c i a  e n t r e  e s t a d o  e n  m e m o r i a  y  p e r s i s t e n c i a  d e  d a t o s .
+ ●  U t i l i z a r  C o n t e x t  y  f i l e s D i r  p a r a  l e e r  y  e s c r i b i r  a r c h i v o s  e n  e l  a l m a c e n a m i e n t o  i n t e r n o
+d e  l a  a p l i c a c i ó n .
+ ●  C o m p r e n d e r  q u é  e s  D a t a S t o r e  y  c u á n d o  c o n v i e n e  u s a r l o  f r e n t e  a  o t r a s  o p c i o n e s  d e
+a l m a c e n a m i e n t o .  
+●  I m p l e m e n t a r  P r e f e r e n c e s  D a t a S t o r e  p a r a  g u a r d a r  y  l e e r  p r e f e r e n c i a s  d e  u s u a r i o  e n
+u n a  a p p  C o m p o s e .  
+●  C o n e c t a r  D a t a S t o r e  c o n  l a  i n t e r f a z  m e d i a n t e  F l o w ,  V i e w M o d e l  y  R e p o s i t o r y .  
+●  O r g a n i z a r  e l  c ó d i g o  e n  c a p a s  ( U I ,  V i e w M o d e l ,  R e p o s i t o r y ,  D a t a S t o r e )  s i g u i e n d o
+b u e n a s  p r á c t i c a s  d e  a r q u i t e c t u r a .  
+●  R e c o n o c e r  c u á n d o  u n  p r o b l e m a  d e  a l m a c e n a m i e n t o  r e q u i e r e  R o o m  e n  l u g a r  d e
+D a t a S t o r e
+Objetivos de
+la clase
+Q u e  v a m o s  a
+c o n s e g u i r  h o y
+
+--- PAGE 3 ---
+¿ Q U É  E S  U N  D A T O ?  
+D e n t r o  d e  u n a  a p l i c a c i ó n  m ó v i l ,  u n
+d a t o  e s  c u a l q u i e r  v a l o r  q u e  l a  a p p
+n e c e s i t a  r e c o r d a r  o  u t i l i z a r :  u n
+n o m b r e ,  u n a  e d a d ,  u n a  p r e f e r e n c i a
+d e  t e m a ,  u n a  c a n t i d a d  d e  t a r e a s
+p e n d i e n t e s .  E s t o s  v a l o r e s  p u e d e n
+s e r  s i m p l e s  ( u n  t e x t o ,  u n  n ú m e r o ,
+u n  b o o l e a n o )  o  f o r m a r  p a r t e  d e
+e s t r u c t u r a s  m á s  c o m p l e j a s .  
+INTRODUCCIÓN
+
+--- PAGE 4 ---
+¿ Q U É  S I G N I F I C A  P E R S I S T I R ?  
+Persistir un dato significa
+almacenarlo de manera que
+pueda recuperarse
+posteriormente, incluso después
+de cerrar la aplicación.
+INTRODUCCIÓN
+L a  p a l a b r a  c l a v e  e s  " d e s p u é s  d e
+c e r r a r " .  
+N o  a l c a n z a  c o n  q u e  e l  d a t o  e s t é
+d i s p o n i b l e  m i e n t r a s  l a  a p p  e s t á
+a b i e r t a :  
+l a  p e r s i s t e n c i a  i m p l i c a  q u e  e l  v a l o r
+s o b r e v i v a  a l  c i e r r e  d e l  p r o c e s o  y  a
+u n  e v e n t u a l  r e i n i c i o  d e l
+d i s p o s i t i v o .  
+
+--- PAGE 5 ---
+El problema
+T e n e m o s  u n a  a p p  d o n d e  e l  u s u a r i o  e s c r i b e  s u
+n o m b r e .  C i e r r a  l a  a p l i c a c i ó n .  C u a n d o  v u e l v e  a
+a b r i r l a ,  e l  n o m b r e  d e s a p a r e c i ó .
+
+--- PAGE 6 ---
+El problema
+T e n e m o s  u n a  a p p  d o n d e  e l  u s u a r i o  e s c r i b e  s u
+n o m b r e .  C i e r r a  l a  a p l i c a c i ó n .  C u a n d o  v u e l v e  a
+a b r i r l a ,  e l  n o m b r e  d e s a p a r e c i ó .
+¿ P o r  q u é  o c u r r e  e s t o ?  P o r q u e  e l  n o m b r e
+e s t a b a  g u a r d a d o  ú n i c a m e n t e  e n  m e m o r i a
+R A M ,  e n  u n a  v a r i a b l e  d e  e s t a d o  q u e  v i v e
+m i e n t r a s  e l  p r o c e s o  d e  l a  a p l i c a c i ó n  e s t á  a c t i v o .
+A l  c e r r a r s e  l a  a p p ,  e l  s i s t e m a  o p e r a t i v o  l i b e r a
+e s a  m e m o r i a  y  e l  v a l o r  s e  p i e r d e  p a r a  s i e m p r e .
+E s t e  e s  e x a c t a m e n t e  e l  p r o b l e m a  q u e  l a
+p e r s i s t e n c i a  d e  d a t o s  v i e n e  a  r e s o l v e r
+
+--- PAGE 7 ---
+Estado vs.
+persistencia
+E n  J e t p a c k  C o m p o s e ,  e l  e s t a d o  d e  u n a  p a n t a l l a  s e
+m a n e j a  h a b i t u a l m e n t e  c o n  r e m e m b e r  y
+m u t a b l e S t a t e O f :  
+E s t a d o  e n  C o m p o s e
+
+--- PAGE 8 ---
+Estado vs.
+persistencia
+E s t a d o  e n  C o m p o s e
+
+
+--- PAGE 9 ---
+Estado vs.
+persistencia
+r e m e m b e r  l e  i n d i c a  a  C o m p o s e  q u e  " r e c u e r d e "  e s e
+v a l o r  e n t r e  r e c o m p o s i c i o n e s  ( p o r  e j e m p l o ,  c u a n d o  l a
+p a n t a l l a  s e  r e d i b u j a  p o r q u e  e l  u s u a r i o  t i p e ó  u n a  l e t r a ) .
+P e r o  e s e  r e c u e r d o  v i v e  ú n i c a m e n t e  e n  l a  m e m o r i a  d e l
+p r o c e s o :  e s  u n  e s t a d o  e n  m e m o r i a ,  n o  p e r s i s t e n t e .
+E s t a d o  e n  C o m p o s e
+
+--- PAGE 10 ---
+¿Qué pasa cuando se
+destruye la UI? 
+
+
+--- PAGE 11 ---
+
+
+--- PAGE 12 ---
+Persistencia
+
+--- PAGE 13 ---
+
+
+--- PAGE 14 ---
+Tipos de
+almacenamiento
+en Android
+ Internal Storage Espacio de
+almacenamiento privado de cada
+aplicación, pensado para archivos:
+texto, JSON, binarios, imágenes
+generadas por la propia app, etc
+
+--- PAGE 15 ---
+Tipos de
+almacenamiento
+en Android
+Room Biblioteca de persistencia que
+se apoya en SQLite, pensada para
+datos estructurados, con relaciones
+entre entidades y consultas
+complejas. 
+
+--- PAGE 16 ---
+Tipos de
+almacenamiento
+en Android
+E x t e r n a l  S t o r a g e  E x i s t e  t a m b i é n  e l  a l m a c e n a m i e n t o  e x t e r n o ,
+c o m p a r t i d o  c o n  o t r a s  a p p s  o  a c c e s i b l e  p o r  e l  u s u a r i o  ( p o r
+e j e m p l o ,  l a  c a r p e t a  d e  D e s c a r g a s ) .  L o  m e n c i o n a m o s  p a r a
+c o m p l e t a r  e l  p a n o r a m a  g e n e r a l ,  p e r o  n o  l o  v a m o s  a
+p r o f u n d i z a r  e n  e s t a  c l a s e ,  y a  q u e  e l  f o c o  e s t á  p u e s t o  e n  e l
+a l m a c e n a m i e n t o  i n t e r n o .  
+
+--- PAGE 17 ---
+Almacenamiento
+interno
+
+
+--- PAGE 18 ---
+¿ Q U É  E S ?
+C a d a  a p l i c a c i ó n  i n s t a l a d a  e n  A n d r o i d  p o s e e  u n  e s p a c i o  d e
+a l m a c e n a m i e n t o  p r i v a d o ,  a l  q u e  n i n g u n a  o t r a  a p p  p u e d e
+a c c e d e r  d i r e c t a m e n t e .  A h í  e s  p o s i b l e  g u a r d a r  a r c h i v o s  p r o p i o s
+d e  l a  a p l i c a c i ó n :  
+C O N T E X T
+A n t e s  d e  p o d e r  u s a r  f i l e s D i r  n e c e s i t a m o s  e n t e n d e r
+q u é  e s  C o n t e x t .  E n  C o m p o s e  l o  o b t e n e m o s  a s í :  
+C O N T E X T  P E R M I T E  A C C E D E R  A
+R E C U R S O S  Y  S E R V I C I O S  P R O P I O S  D E L
+E N T O R N O  A N D R O I D .  
+E n  o t r a s  p a l a b r a s ,  C o n t e x t  e s  e l  p u e n t e  e n t r e  n u e s t r o
+c ó d i g o  y  e l  s i s t e m a  o p e r a t i v o :  a  t r a v é s  d e  é l
+a c c e d e m o s  a  r e c u r s o s ,  s e r v i c i o s  d e l  s i s t e m a ,  y
+t a m b i é n  a l  a l m a c e n a m i e n t o  i n t e r n o  d e  l a  a p l i c a c i ó n .
+
+--- PAGE 19 ---
+FilesDir 
+
+
+--- PAGE 20 ---
+O B T E N E R  E L  D I R E C T O R I O
+C R E A R  U N  A R C H I V O
+F i l e ( )  r e c i b e  d o s  p a r á m e t r o s :  e l  d i r e c t o r i o  d o n d e  v i v i r á
+e l  a r c h i v o  ( e n  e s t e  c a s o ,  e l  a l m a c e n a m i e n t o  i n t e r n o
+p r i v a d o )  y  e l  n o m b r e  d e l  a r c h i v o .  E n  e s t e  p u n t o  e l
+a r c h i v o  t o d a v í a  n o  e x i s t e  f í s i c a m e n t e :  r e c i é n  s e  c r e a
+c u a n d o  e s c r i b i m o s  c o n t e n i d o  e n  é l
+
+--- PAGE 21 ---
+Vamos a ver un
+proyecto
+A T E N T O S !

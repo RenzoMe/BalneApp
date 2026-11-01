@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="240" viewBox="0 0 720 240" role="img" aria-label="Iconos de pelota de playa, canchas y estacionamiento con E de BalneApp">
+  <rect width="720" height="240" fill="#FFFFFF"/>
+  <g fill="none" stroke="#0B6F78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(60 60) scale(5)">
+      <path d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18Zm0 0c-4 4-4 14 0 18m0-18c4 4 4 14 0 18"/>
+    </g>
+    <g transform="translate(300 60) scale(5)">
+      <path d="M4 4h16q1 0 1 1v14q0 1-1 1H4q-1 0-1-1V5q0-1 1-1Zm8 0v16m0-11.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7ZM3 9h3v6H3m15-6h3v6h-3"/>
+    </g>
+    <g transform="translate(540 60) scale(5)">
+      <path d="M5 3h14q2 0 2 2v14q0 2-2 2H5q-2 0-2-2V5q0-2 2-2Zm10 4H9v10h6m-6-5h5"/>
+    </g>
+  </g>
+</svg>

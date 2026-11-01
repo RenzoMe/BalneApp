@@ -1,0 +1,628 @@
+--- PAGE 1 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 1
+Guía completa: Room con Kotlin y
+Jetpack Compose
+Material para clase · Android · Persistencia de datos · Teoría, código y ejercicios
+Contenido
+1. ¿Qué es Room?
+2. Conceptos fundamentales de Room
+3. Preparar el proyecto
+4. Crear una aplicación de ejemplo: lista de tareas
+5. Consultas SQL con Room
+6. Conceptos importantes para el examen
+7. Ejercicios para la clase
+8. Soluciones de los ejercicios
+9. Buenas prácticas y errores frecuentes
+10. Material oficial para ampliar
+
+
+--- PAGE 2 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 2
+1. ¿Qué es Room?
+Room es una biblioteca de Android que permite guardar datos de manera persistente en una base de
+datos SQLite utilizando Kotlin. Facilita las operaciones de consulta, inserción, actualización y
+eliminación de datos, evitando escribir SQL repetitivo para muchas tareas comunes.
+Por otro lado, Jetpack Compose es el sistema moderno de Android para construir interfaces gráficas
+mediante funciones Kotlin.
+Ambas tecnologías trabajan juntas, pero cumplen funciones distintas:
+Capa
+Función
+Jetpack Compose
+Muestra la información y recibe las acciones del usuario.
+ViewModel / Repository
+Organiza la lógica y coordina el acceso a los datos.
+Room
+Administra las operaciones de la base de datos SQLite.
+El flujo entre capas: Compose envía eventos hacia abajo (ViewModel/Repository, luego Room) y
+recibe estado hacia arriba.
+¿Para qué sirve Room?
+ Guardar información aunque se cierre la aplicación.
+ Consultar datos sin depender de Internet.
+ Modificar o eliminar registros.
+ Modelar relaciones entre tablas.
+ Observar cambios en los datos y actualizar la interfaz.
+ Reducir errores al trabajar con consultas SQL.
+Ejemplo: una aplicación de tareas puede utilizar Compose para mostrar una lista, Room para
+guardar las tareas y un ViewModel para coordinar las operaciones.
+2. Conceptos fundamentales de Room
+Room se apoya en tres componentes principales.
+1. Entity — la tabla
+Representa una tabla de la base de datos. Cada objeto representa un registro y cada propiedad
+representa una columna.
+2. DAO — las operaciones
+Significa Data Access Object. Define cómo insertar, consultar, actualizar y eliminar registros
+mediante funciones Kotlin y consultas SQL.
+3. RoomDatabase — la base de datos
+Es la clase principal que conecta las entidades y los DAO con la base de datos SQLite.
+También se utilizan anotaciones para indicarle a Room qué representa cada elemento:
+
+
+--- PAGE 3 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 3
+Anotación
+Función
+@Entity
+Define una tabla.
+@PrimaryKey
+Define la clave primaria.
+@Dao
+Define las operaciones de acceso.
+@Insert
+Inserta registros.
+@Query
+Ejecuta consultas SQL.
+@Update
+Actualiza registros.
+@Delete
+Elimina registros.
+@Database
+Configura la base de datos.
+3. Preparar el proyecto
+En Android Studio, creá un proyecto con Kotlin y Jetpack Compose. Para utilizar Room, agregá sus
+dependencias en el archivo de Gradle del módulo de la aplicación.
+Ejemplo con Kotlin DSL (build.gradle.kts):
+plugins {
+    id("com.google.devtools.ksp")
+}
+dependencies {
+    val roomVersion = "2.8.4"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+}
+Este ejemplo supone que KSP ya está configurado para la versión de Kotlin del proyecto. Si no lo
+está, hay que agregar el plugin compatible en el Gradle correspondiente. La versión de Room es un
+ejemplo de referencia: conviene verificar la última versión estable y su compatibilidad con el
+proyecto.
+room-runtime proporciona la biblioteca principal; room-ktx integra las operaciones con corrutinas
+y Flows; room-compiler, mediante KSP, genera el código necesario.
+4. Crear una aplicación de ejemplo: lista de tareas
+Vamos a construir una aplicación que permita:
+ Agregar tareas.
+ Ver todas las tareas guardadas.
+ Marcar tareas como completadas.
+ Eliminar tareas.
+ Mantener los datos después de cerrar la aplicación.
+El ejemplo usa Room 2.x y una arquitectura sencilla con ViewModel y Compose.
+
+
+--- PAGE 4 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 4
+Paso 1. Crear la entidad (Tarea.kt)
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+@Entity(tableName = "tareas")
+data class Tarea(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val titulo: String,
+    val completada: Boolean = false
+)
+Explicación:
+ @Entity: indica que la clase representa una tabla.
+ tableName = "tareas": establece el nombre de la tabla.
+ data class: permite representar datos de manera concisa.
+ @PrimaryKey: define el identificador único de cada registro.
+ autoGenerate = true: hace que SQLite genere los identificadores.
+ completada: almacena si la tarea está terminada.
+La tabla resultante tendrá tres columnas: id, titulo y completada.
+Paso 2. Crear el DAO (TareaDao.kt)
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+@Dao
+interface TareaDao {
+    @Query("SELECT * FROM tareas ORDER BY id DESC")
+    fun obtenerTodas(): Flow<List<Tarea>>
+    @Insert
+    suspend fun insertar(tarea: Tarea)
+    @Update
+    suspend fun actualizar(tarea: Tarea)
+    @Delete
+    suspend fun eliminar(tarea: Tarea)
+}
+¿Qué hace cada función?
+Función
+Resultado
+obtenerTodas()
+Devuelve las tareas y permite observar sus cambios.
+insertar()
+Guarda una tarea nueva.
+actualizar()
+Modifica una tarea existente.
+eliminar()
+Borra una tarea.
+Hay dos conceptos importantes:
+
+
+--- PAGE 5 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 5
+ suspend: permite ejecutar una operación dentro de una corrutina, sin bloquear el hilo principal.
+ Flow<List<Tarea>>: representa un flujo de listas que puede emitir nuevos valores cuando
+cambia la tabla.
+Room observa automáticamente las tablas utilizadas en la consulta y vuelve a emitir resultados
+cuando detecta cambios relevantes.
+Paso 3. Crear la base de datos (AppDatabase.kt)
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+@Database(
+    entities = [Tarea::class],
+    version = 1,
+    exportSchema = false
+)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun tareaDao(): TareaDao
+    companion object {
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
+        fun obtenerInstancia(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "tareas_db"
+                ).build().also {
+                    INSTANCE = it
+                }
+            }
+        }
+    }
+}
+Explicación de los elementos principales:
+ @Database: declara la configuración de Room.
+ entities: enumera las tablas de la base de datos.
+ version = 1: establece la versión del esquema.
+ tareaDao(): permite acceder a las operaciones.
+ databaseBuilder(): construye la base de datos persistente.
+ "tareas_db": nombre del archivo de la base de datos.
+ INSTANCE: evita crear varias instancias innecesarias de la base de datos.
+La base de datos se crea cuando se necesita, no hace falta construirla cada vez que el usuario abre
+una pantalla.
+En una aplicación de producción conviene exportar los esquemas y planificar las migraciones.
+exportSchema = false se utiliza aquí para simplificar el ejercicio inicial.
+
+
+--- PAGE 6 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 6
+Paso 4. Crear el repositorio (TareaRepository.kt)
+El repositorio separa las operaciones de datos de la interfaz y del ViewModel.
+class TareaRepository(
+    private val dao: TareaDao
+) {
+    val tareas = dao.obtenerTodas()
+    suspend fun agregar(titulo: String) {
+        dao.insertar(Tarea(titulo = titulo))
+    }
+    suspend fun cambiarEstado(tarea: Tarea) {
+        dao.actualizar(
+            tarea.copy(completada = !tarea.completada)
+        )
+    }
+    suspend fun borrar(tarea: Tarea) {
+        dao.eliminar(tarea)
+    }
+}
+El método copy() crea una nueva instancia de la tarea con el estado modificado, sin cambiar
+directamente el objeto original.
+Paso 5. Crear el ViewModel (TareaViewModel.kt)
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+class TareaViewModel(
+    private val repository: TareaRepository
+) : ViewModel() {
+    val tareas = repository.tareas.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+    fun agregar(titulo: String) {
+        if (titulo.isBlank()) return
+        viewModelScope.launch {
+            repository.agregar(titulo.trim())
+        }
+    }
+    fun cambiarEstado(tarea: Tarea) {
+        viewModelScope.launch {
+            repository.cambiarEstado(tarea)
+        }
+    }
+    fun borrar(tarea: Tarea) {
+        viewModelScope.launch {
+            repository.borrar(tarea)
+        }
+    }
+}
+
+
+--- PAGE 7 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 7
+class TareaViewModelFactory(
+    private val repository: TareaRepository
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(
+        modelClass: Class<T>
+    ): T {
+        if (modelClass.isAssignableFrom(TareaViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return TareaViewModel(repository) as T
+        }
+        throw IllegalArgumentException("ViewModel desconocido")
+    }
+}
+El ViewModel mantiene el estado que necesita la interfaz y ejecuta las operaciones mediante
+corrutinas. Así evitamos realizar operaciones de base de datos en el hilo principal.
+Paso 6. Crear la interfaz con Jetpack Compose (MainActivity.kt)
+Este ejemplo asume que las clases anteriores están en el mismo paquete que la actividad.
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+class MainActivity : ComponentActivity() {
+    private val viewModel: TareaViewModel by viewModels {
+        val db = AppDatabase.obtenerInstancia(applicationContext)
+        TareaViewModelFactory(
+            TareaRepository(db.tareaDao())
+        )
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                PantallaTareas(viewModel)
+            }
+        }
+    }
+}
+@Composable
+fun PantallaTareas(viewModel: TareaViewModel) {
+    var titulo by remember { mutableStateOf("") }
+    val tareas by viewModel.tareas.collectAsStateWithLifecycle()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+
+
+--- PAGE 8 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 8
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Mis tareas",
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Spacer(Modifier.height(16.dp))
+        OutlinedTextField(
+            value = titulo,
+            onValueChange = { titulo = it },
+            label = { Text("Nueva tarea") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Button(
+            onClick = {
+                viewModel.agregar(titulo)
+                titulo = ""
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Agregar tarea")
+        }
+        Spacer(Modifier.height(16.dp))
+        if (tareas.isEmpty()) {
+            Text("Todavía no hay tareas.")
+        }
+        LazyColumn {
+            items(tareas, key = { it.id }) { tarea ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = tarea.completada,
+                        onCheckedChange = {
+                            viewModel.cambiarEstado(tarea)
+                        }
+                    )
+                    Text(
+                        text = tarea.titulo,
+                        modifier = Modifier.weight(1f)
+                    )
+                    TextButton(
+                        onClick = {
+                            viewModel.borrar(tarea)
+                        }
+                    ) {
+                        Text("Eliminar")
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+--- PAGE 9 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 9
+Para este código también necesitás la dependencia
+androidx.lifecycle:lifecycle-runtime-compose en el módulo de la aplicación,
+compatible con el resto de las versiones de Lifecycle del proyecto, para utilizar
+collectAsStateWithLifecycle().
+¿Qué sucede cuando agregamos una tarea?
+1. El usuario pulsa Agregar tarea.
+2. Compose llama a viewModel.agregar(titulo).
+3. El repositorio llama al DAO, que inserta la tarea en Room.
+4. El Flow emite la nueva lista y Compose actualiza la pantalla.
+La clave es que no necesitamos volver a consultar manualmente las tareas después de cada
+inserción: el flujo observado mantiene sincronizados los datos y la interfaz.
+5. Consultas SQL con Room
+Además de las operaciones básicas, podemos utilizar SQL para filtrar, ordenar y contar registros.
+Supongamos que seguimos utilizando la tabla tareas.
+Consultar tareas pendientes
+@Query("SELECT * FROM tareas WHERE completada = 0")
+fun obtenerPendientes(): Flow<List<Tarea>>
+Buscar tareas por título
+@Query("SELECT * FROM tareas WHERE titulo LIKE '%' || :texto || '%'")
+fun buscarPorTitulo(texto: String): Flow<List<Tarea>>
+El parámetro :texto recibe el valor que se quiere buscar. Room lo vincula de forma segura a la
+consulta.
+Contar las tareas completadas
+@Query("SELECT COUNT(*) FROM tareas WHERE completada = 1")
+fun contarCompletadas(): Flow<Int>
+Eliminar todas las tareas
+@Query("DELETE FROM tareas")
+suspend fun eliminarTodas()
+Estas funciones deben declararse dentro de la interfaz TareaDao. Room verifica las consultas
+durante la compilación.
+6. Conceptos importantes para el examen
+Concepto
+Qué tenés que recordar
+SQLite
+Motor de base de datos relacional local.
+Room
+Biblioteca que facilita el uso de SQLite en Android.
+Entity
+Representa una tabla.
+
+
+--- PAGE 10 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 10
+Concepto
+Qué tenés que recordar
+DAO
+Define las operaciones de acceso a los datos.
+Primary key
+Identifica de forma única cada registro.
+Query
+Consulta o modifica datos mediante SQL.
+Coroutine
+Permite realizar operaciones suspendibles sin bloquear el hilo principal.
+Flow
+Emite nuevos valores a medida que cambian los datos observados.
+ViewModel
+Conserva y administra el estado de la interfaz.
+Compose
+Construye la interfaz a partir del estado actual.
+Repository
+Separa la lógica de acceso a datos del resto de la aplicación.
+Diferencia entre suspend y Flow
+Esta distinción suele generar confusión.
+@Insert
+suspend fun insertar(tarea: Tarea)
+La función inserta un registro cuando se ejecuta. No devuelve automáticamente una lista
+actualizada. En cambio:
+@Query("SELECT * FROM tareas")
+fun obtenerTodas(): Flow<List<Tarea>>
+La función devuelve un flujo que emite listas y vuelve a emitirlas cuando cambian los datos
+observados.
+Regla práctica: usamos suspend para operaciones puntuales y Flow cuando queremos observar
+datos que pueden cambiar.
+7. Ejercicios para la clase
+Actividad 1. Elegí la respuesta correcta
+1. ¿Qué anotación se utiliza para definir una tabla?
+a) @Dao
+b) @Entity
+c) @Database
+2. ¿Qué componente define las operaciones de acceso a los datos?
+a) DAO
+b) Composable
+c) ViewModel
+
+
+--- PAGE 11 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 11
+3. ¿Para qué sirve @PrimaryKey(autoGenerate = true)?
+a) Ordenar las tareas
+b) Generar identificadores automáticamente
+c) Eliminar duplicados de texto
+4. ¿Qué tipo permite observar cambios en una consulta?
+a) String
+b) Int
+c) Flow<List<Tarea>>
+5. ¿Dónde conviene ejecutar una inserción suspendible?
+a) En una corrutina
+b) Directamente en el hilo principal
+c) Dentro de un Text
+6. ¿Qué tecnología construye la interfaz declarativa?
+a) SQLite
+b) Jetpack Compose
+c) RoomDatabase
+Actividad 2. Completar el código
+Completá los espacios para crear una entidad llamada Alumno, con identificador automático,
+nombre y edad.
+__________(tableName = "alumnos")
+data class Alumno(
+    __________(autoGenerate = true)
+    val id: Int = 0,
+    val nombre: String,
+    val edad: Int
+)
+Preguntas:
+1. ¿Qué anotación va en el primer espacio?
+2. ¿Qué anotación va en el segundo?
+3. ¿Por qué el identificador tiene un valor inicial de cero?
+Actividad 3. Escribir un DAO
+Creá una interfaz AlumnoDao que permita:
+1. Insertar un alumno.
+2. Consultar todos los alumnos.
+3. Consultar los alumnos mayores de 18 años.
+4. Eliminar un alumno.
+Condiciones:
+ Usá @Dao.
+ Utilizá @Insert, @Query y @Delete.
+
+
+--- PAGE 12 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 12
+ Las consultas que devuelvan listas deben usar Flow<List<Alumno>>.
+ Las operaciones de escritura deben ser suspend.
+Actividad 4. Modificar la aplicación de tareas
+Partiendo del ejemplo completo, agregá estas funcionalidades:
+ Mostrar cuántas tareas existen.
+ Mostrar cuántas tareas están completadas.
+ Añadir un botón para filtrar las pendientes.
+ Permitir buscar por título.
+ Evitar guardar títulos vacíos.
+ Comprobar que las tareas siguen presentes al cerrar y volver a abrir la aplicación.
+Desafío adicional: agregá una fecha de vencimiento a cada tarea y ordená la lista por fecha.
+Actividad 5. Analizar errores
+Indicá qué problema existe en cada caso y cómo lo solucionarías.
+Caso A
+fun guardar(tarea: Tarea) {
+    dao.insertar(tarea)
+}
+Caso B
+@Entity
+data class Producto(
+    val nombre: String
+)
+Caso C
+@Query("SELECT * FROM alumnos")
+fun obtenerAlumnos(): List<Alumno>
+Para el caso C, considerá el objetivo de observar cambios automáticamente y la versión de Room
+que se está utilizando.
+8. Soluciones de los ejercicios
+Solución de la actividad 1
+Pregunta
+Respuesta correcta
+1
+@Entity
+2
+DAO
+3
+Generar identificadores automáticamente
+4
+Flow<List<Tarea>>
+5
+En una corrutina
+
+
+--- PAGE 13 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 13
+Pregunta
+Respuesta correcta
+6
+Jetpack Compose
+Solución de la actividad 2
+@Entity(tableName = "alumnos")
+data class Alumno(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val nombre: String,
+    val edad: Int
+)
+El cero funciona como valor inicial para que la base de datos pueda asignar el identificador
+automáticamente.
+Solución de la actividad 3
+@Dao
+interface AlumnoDao {
+    @Insert
+    suspend fun insertar(alumno: Alumno)
+    @Query("SELECT * FROM alumnos")
+    fun obtenerTodos(): Flow<List<Alumno>>
+    @Query("SELECT * FROM alumnos WHERE edad > 18")
+    fun obtenerMayores(): Flow<List<Alumno>>
+    @Delete
+    suspend fun eliminar(alumno: Alumno)
+}
+Solución de la actividad 5
+Caso A: falta ejecutar la inserción dentro de una corrutina. Como insertar() es suspend, la
+función que la llama también debe ser suspendible o invocarla desde una corrutina.
+Caso B: falta definir una clave primaria. Una entidad de Room necesita una clave primaria, por
+ejemplo @PrimaryKey(autoGenerate = true) val id: Int = 0.
+Caso C: la consulta devuelve una lista puntual, no un flujo observable. Si queremos actualizar la
+interfaz automáticamente, podemos devolver Flow<List<Alumno>>.
+9. Buenas prácticas y errores frecuentes
+ No ejecutar operaciones de base de datos en el hilo principal.
+ No crear una instancia nueva de la base de datos en cada recomposición de Compose.
+ No confundir una entidad con el DAO: una representa los datos y el otro las operaciones.
+ No olvidar actualizar la versión y definir migraciones cuando cambie el esquema.
+ No borrar ni recrear una base de datos en producción simplemente para evitar escribir una
+migración: eso puede hacer perder información.
+ Mantener la lógica de negocio fuera de los componentes visuales.
+ Usar claves estables en listas de Compose cuando los elementos tienen identificadores.
+
+
+--- PAGE 14 ---
+Guía: Room con Kotlin y Jetpack Compose
+Página 14
+10. Material oficial para ampliar
+ Room: guardar datos en una base local — guía oficial de Android.
+ Versiones y dependencias de Room — compatibilidad y cambios de versiones.
+ Documentación de Jetpack Compose — interfaces declarativas.
+La guía utiliza la API clásica de Room 2.x. Al actualizar dependencias, revisá la compatibilidad entre
+Room, Kotlin, KSP y Lifecycle; las versiones mayores pueden cambiar paquetes y requisitos.
+Idea central de la clase: Compose muestra, el ViewModel coordina, el repositorio organiza y Room
+persiste. Cuando cada pieza cumple su función, la aplicación resulta más fácil de entender, probar y
+mantener.

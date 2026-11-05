@@ -1,0 +1,319 @@
+package com.example.balneapp.ui.theme.pantallas
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.balneapp.navigation.AppRoute
+import androidx.navigation.compose.rememberNavController
+import com.example.balneapp.R
+import com.example.balneapp.ui.components.BotonFavoritoBalneario
+import com.example.balneapp.ui.components.FilaServiciosBalneario
+import com.example.balneapp.ui.model.BalnearioIds
+
+@Composable
+fun PantallaGolondrinas(navController: NavController) {
+
+    val fondoCrema = Color(0xFFFFFBF2)
+    val celesteInsignia = Color(0xFFD0F8FF)
+    val celesteTexto = Color(0xFF00A3C4)
+    val celesteBoton = Color(0xFF00B5D8)
+    val textoOscuro = Color(0xFF222222)
+    val textoGris = Color(0xFF757575)
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(fondoCrema)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(320.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.imagengolondrina),
+                    contentDescription = "Balneario Golondrinas",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                Surface(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(start = 16.dp, top = 8.dp)
+                        .size(42.dp)
+                        .clickable { navController.popBackStack() },
+                    shape = CircleShape,
+                    color = Color.White
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_balneapp_back),
+                            contentDescription = "Volver",
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+
+                BotonFavoritoBalneario(
+                    balnearioId = BalnearioIds.GOLONDRINAS,
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(end = 16.dp, top = 8.dp)
+                        .align(Alignment.TopEnd),
+                    colorActivo = Color(0xFF00B5D8),
+                    colorInactivo = Color(0xFF00B5D8)
+                )
+
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(start = 16.dp, bottom = 28.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.imagengolondrina),
+                        contentDescription = "Miniatura 1",
+                        modifier = Modifier
+                            .size(width = 65.dp, height = 50.dp)
+                            .border(width = 2.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.imagenpaco),
+                        contentDescription = "Miniatura 2",
+                        modifier = Modifier
+                            .size(width = 65.dp, height = 50.dp)
+                            .border(width = 2.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.img_oasis),
+                        contentDescription = "Miniatura 3",
+                        modifier = Modifier
+                            .size(width = 65.dp, height = 50.dp)
+                            .border(width = 2.dp, color = Color.White, shape = RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(y = (-20).dp),
+                shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                color = fondoCrema
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 24.dp)
+                ) {
+                    Text(
+                        text = "Balneario Golondrinas",
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textoOscuro
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "Ubicación",
+                            tint = textoOscuro,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Av. costanera y 33",
+                            fontSize = 14.sp,
+                            color = textoOscuro
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = celesteInsignia
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_balneapp_review),
+                                contentDescription = "Puntuación",
+                                modifier = Modifier.size(18.dp),
+                                colorFilter = ColorFilter.tint(Color(0xFFFFC107))
+                            )
+                            Text(
+                                text = "4.8",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = celesteTexto
+                            )
+                            Text(
+                                text = "(185)",
+                                fontSize = 14.sp,
+                                color = Color.Gray
+                            )
+
+                            Spacer(modifier = Modifier.width(4.dp))
+                            
+                            Row(
+                                modifier = Modifier.clickable {
+                                    navController.navigate(AppRoute.Resenas.route)
+                                },
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Image(
+                                    painter = painterResource(R.drawable.ic_balneapp_review),
+                                    contentDescription = "Ver reseñas",
+                                    modifier = Modifier.size(16.dp),
+                                    colorFilter = ColorFilter.tint(celesteTexto)
+                                )
+                                Text(
+                                    text = "Reseñas",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = celesteTexto
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text = "Servicios",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = celesteTexto
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    FilaServiciosBalneario()
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Contacto ",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = textoOscuro
+                        )
+                        Text(
+                            text = "·2291-420115",
+                            fontSize = 15.sp,
+                            color = textoGris
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = "Descripción",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = textoOscuro
+                    )
+
+                    Spacer(modifier = Modifier.height(6.dp))
+
+                    Text(
+                        text = "Un balneario tranquilo e ideal para la familia, con vista privilegiada al mar, carpas confortables, servicios gastronómicos y espacio recreativo.",
+                        fontSize = 16.sp,
+                        color = textoGris,
+                        lineHeight = 22.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(36.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Desde",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = textoGris
+                            )
+                            Text(
+                                text = "$ 28.000",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        }
+
+                        Button(
+                            onClick = { navController.navigate(AppRoute.Disponibilidad.conId(BalnearioIds.GOLONDRINAS)) },
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = celesteBoton),
+                            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                        ) {
+                            Text(
+                                text = "Ver disponibilidad",
+                                color = Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun PantallaGolondrinasPreview() {
+    PantallaGolondrinas(navController = rememberNavController())
+}
